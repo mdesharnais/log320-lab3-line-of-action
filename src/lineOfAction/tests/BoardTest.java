@@ -89,4 +89,27 @@ public class BoardTest {
 		assertEquals(board.get(new Position(Column.G, Line.Eight)), Player.Black);
 		assertEquals(board.get(new Position(Column.H, Line.Eight)), null);
 	}
+
+	@Test
+	public void testToString() {
+		Board board = new Board(new char[] {
+				'0', '2', '2', '2', '2', '2', '2', '0',
+				'4', '0', '0', '0', '0', '0', '0', '4',
+				'4', '0', '0', '0', '0', '0', '0', '4',
+				'4', '0', '0', '0', '0', '0', '0', '4',
+				'4', '0', '0', '0', '0', '0', '0', '4',
+				'4', '0', '0', '0', '0', '0', '0', '4',
+				'4', '0', '0', '0', '0', '0', '0', '4',
+				'0', '2', '2', '2', '2', '2', '2', '0'
+		});
+
+		assertEquals(board.toString(), ". O O O O O O .\n" +
+				"X . . . . . . X\n" +
+				"X . . . . . . X\n" +
+				"X . . . . . . X\n" +
+				"X . . . . . . X\n" +
+				"X . . . . . . X\n" +
+				"X . . . . . . X\n" +
+				". O O O O O O .\n");
+	}
 }

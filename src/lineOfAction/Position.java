@@ -8,4 +8,9 @@ public class Position {
 		this.line = line;
 		this.column = column;
 	}
+
+	@Override
+	public String toString() {
+		return this.column.toString() + this.line.toString();
+	}
 }

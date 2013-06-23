@@ -8,4 +8,9 @@ public class Movement {
 		this.departure = start;
 		this.arrival = arrival;
 	}
+
+	@Override
+	public String toString() {
+		return this.departure.toString() + this.arrival.toString();
+	}
 }

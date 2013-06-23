@@ -82,4 +82,27 @@ public class Board {
 
 		return this.data[xoffset * 8 + yoffset];
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+
+		for (int i = 0; i < this.data.length; ++i) {
+			if (this.data[i] == null) {
+				builder.append('.');
+			} else if (this.data[i] == Player.Black) {
+				builder.append('O');
+			} else if (this.data[i] == Player.White) {
+				builder.append('X');
+			}
+
+			if (i != 0 && i % 8 == 7) {
+				builder.append('\n');
+			} else {
+				builder.append(' ');
+			}
+		}
+
+		return builder.toString();
+	}
 }
