@@ -213,7 +213,6 @@ public class BoardTest {
 		assertEquals(l1.size(), l2.size());
 		for (int i = 0; i < l1.size(); ++i) {
 			assertEquals(l1.get(i), l2.get(i));
-			System.out.println(i);
 		}
 	}
 }
