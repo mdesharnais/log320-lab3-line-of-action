@@ -1,6 +1,6 @@
 package lineOfAction;
 
-public class Position {
+public class Position implements Comparable<Position> {
 	public final Line line;
 	public final Column column;
 
@@ -41,5 +41,20 @@ public class Position {
 		}
 
 		return code;
+	}
+
+	@Override
+	public int compareTo(Position other) {
+		if (other == null) {
+			return 1;
+		}
+
+		int result = Utils.compareTo(this.line, other.line);
+
+		if (result == 0) {
+			result = Utils.compareTo(this.column, other.column);
+		}
+
+		return result;
 	}
 }

@@ -1,6 +1,6 @@
 package lineOfAction;
 
-public class Pair<T1, T2> {
+public class Pair<T1 extends Comparable<T1>, T2 extends Comparable<T2>> implements Comparable<Pair<T1, T2>> {
 	public final T1 item1;
 	public final T2 item2;
 
@@ -49,5 +49,20 @@ public class Pair<T1, T2> {
 			return def;
 		}
 		return obj.toString();
+	}
+
+	@Override
+	public int compareTo(Pair<T1, T2> other) {
+		if (other == null) {
+			return 1;
+		}
+
+		int result = Utils.compareTo(this.item1, other.item1);
+
+		if (result == 0) {
+			result = Utils.compareTo(this.item2, other.item2);
+		}
+
+		return result;
 	}
 }
