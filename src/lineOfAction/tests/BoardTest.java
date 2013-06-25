@@ -1,9 +1,10 @@
 package lineOfAction.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import lineOfAction.Board;
 import lineOfAction.Column;
@@ -131,88 +132,86 @@ public class BoardTest {
 				'0', '2', '2', '2', '2', '2', '2', '0'
 		});
 
-		List<Pair<Player, Position>> l1 = new ArrayList<Pair<Player, Position>>();
+		Set<Pair<Player, Position>> e1 = new TreeSet<Pair<Player, Position>>();
 
-		l1.add(new Pair<Player, Position>(null, new Position(Column.A, Line.Eight)));
-		l1.add(new Pair<Player, Position>(Player.Black, new Position(Column.B, Line.Eight)));
-		l1.add(new Pair<Player, Position>(Player.Black, new Position(Column.C, Line.Eight)));
-		l1.add(new Pair<Player, Position>(Player.Black, new Position(Column.D, Line.Eight)));
-		l1.add(new Pair<Player, Position>(Player.Black, new Position(Column.E, Line.Eight)));
-		l1.add(new Pair<Player, Position>(Player.Black, new Position(Column.F, Line.Eight)));
-		l1.add(new Pair<Player, Position>(Player.Black, new Position(Column.G, Line.Eight)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.H, Line.Eight)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.A, Line.Eight)));
+		e1.add(new Pair<Player, Position>(Player.Black, new Position(Column.B, Line.Eight)));
+		e1.add(new Pair<Player, Position>(Player.Black, new Position(Column.C, Line.Eight)));
+		e1.add(new Pair<Player, Position>(Player.Black, new Position(Column.D, Line.Eight)));
+		e1.add(new Pair<Player, Position>(Player.Black, new Position(Column.E, Line.Eight)));
+		e1.add(new Pair<Player, Position>(Player.Black, new Position(Column.F, Line.Eight)));
+		e1.add(new Pair<Player, Position>(Player.Black, new Position(Column.G, Line.Eight)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.H, Line.Eight)));
 
-		l1.add(new Pair<Player, Position>(Player.White, new Position(Column.A, Line.Seven)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.B, Line.Seven)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.C, Line.Seven)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.D, Line.Seven)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.E, Line.Seven)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.F, Line.Seven)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.G, Line.Seven)));
-		l1.add(new Pair<Player, Position>(Player.White, new Position(Column.H, Line.Seven)));
+		e1.add(new Pair<Player, Position>(Player.White, new Position(Column.A, Line.Seven)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.B, Line.Seven)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.C, Line.Seven)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.D, Line.Seven)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.E, Line.Seven)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.F, Line.Seven)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.G, Line.Seven)));
+		e1.add(new Pair<Player, Position>(Player.White, new Position(Column.H, Line.Seven)));
 
-		l1.add(new Pair<Player, Position>(Player.White, new Position(Column.A, Line.Six)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.B, Line.Six)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.C, Line.Six)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.D, Line.Six)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.E, Line.Six)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.F, Line.Six)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.G, Line.Six)));
-		l1.add(new Pair<Player, Position>(Player.White, new Position(Column.H, Line.Six)));
+		e1.add(new Pair<Player, Position>(Player.White, new Position(Column.A, Line.Six)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.B, Line.Six)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.C, Line.Six)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.D, Line.Six)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.E, Line.Six)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.F, Line.Six)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.G, Line.Six)));
+		e1.add(new Pair<Player, Position>(Player.White, new Position(Column.H, Line.Six)));
 
-		l1.add(new Pair<Player, Position>(Player.White, new Position(Column.A, Line.Five)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.B, Line.Five)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.C, Line.Five)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.D, Line.Five)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.E, Line.Five)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.F, Line.Five)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.G, Line.Five)));
-		l1.add(new Pair<Player, Position>(Player.White, new Position(Column.H, Line.Five)));
+		e1.add(new Pair<Player, Position>(Player.White, new Position(Column.A, Line.Five)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.B, Line.Five)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.C, Line.Five)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.D, Line.Five)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.E, Line.Five)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.F, Line.Five)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.G, Line.Five)));
+		e1.add(new Pair<Player, Position>(Player.White, new Position(Column.H, Line.Five)));
 
-		l1.add(new Pair<Player, Position>(Player.White, new Position(Column.A, Line.Four)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.B, Line.Four)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.C, Line.Four)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.D, Line.Four)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.E, Line.Four)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.F, Line.Four)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.G, Line.Four)));
-		l1.add(new Pair<Player, Position>(Player.White, new Position(Column.H, Line.Four)));
+		e1.add(new Pair<Player, Position>(Player.White, new Position(Column.A, Line.Four)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.B, Line.Four)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.C, Line.Four)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.D, Line.Four)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.E, Line.Four)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.F, Line.Four)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.G, Line.Four)));
+		e1.add(new Pair<Player, Position>(Player.White, new Position(Column.H, Line.Four)));
 
-		l1.add(new Pair<Player, Position>(Player.White, new Position(Column.A, Line.Three)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.B, Line.Three)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.C, Line.Three)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.D, Line.Three)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.E, Line.Three)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.F, Line.Three)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.G, Line.Three)));
-		l1.add(new Pair<Player, Position>(Player.White, new Position(Column.H, Line.Three)));
+		e1.add(new Pair<Player, Position>(Player.White, new Position(Column.A, Line.Three)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.B, Line.Three)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.C, Line.Three)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.D, Line.Three)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.E, Line.Three)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.F, Line.Three)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.G, Line.Three)));
+		e1.add(new Pair<Player, Position>(Player.White, new Position(Column.H, Line.Three)));
 
-		l1.add(new Pair<Player, Position>(Player.White, new Position(Column.A, Line.Two)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.B, Line.Two)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.C, Line.Two)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.D, Line.Two)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.E, Line.Two)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.F, Line.Two)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.G, Line.Two)));
-		l1.add(new Pair<Player, Position>(Player.White, new Position(Column.H, Line.Two)));
+		e1.add(new Pair<Player, Position>(Player.White, new Position(Column.A, Line.Two)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.B, Line.Two)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.C, Line.Two)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.D, Line.Two)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.E, Line.Two)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.F, Line.Two)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.G, Line.Two)));
+		e1.add(new Pair<Player, Position>(Player.White, new Position(Column.H, Line.Two)));
 
-		l1.add(new Pair<Player, Position>(null, new Position(Column.A, Line.One)));
-		l1.add(new Pair<Player, Position>(Player.Black, new Position(Column.B, Line.One)));
-		l1.add(new Pair<Player, Position>(Player.Black, new Position(Column.C, Line.One)));
-		l1.add(new Pair<Player, Position>(Player.Black, new Position(Column.D, Line.One)));
-		l1.add(new Pair<Player, Position>(Player.Black, new Position(Column.E, Line.One)));
-		l1.add(new Pair<Player, Position>(Player.Black, new Position(Column.F, Line.One)));
-		l1.add(new Pair<Player, Position>(Player.Black, new Position(Column.G, Line.One)));
-		l1.add(new Pair<Player, Position>(null, new Position(Column.H, Line.One)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.A, Line.One)));
+		e1.add(new Pair<Player, Position>(Player.Black, new Position(Column.B, Line.One)));
+		e1.add(new Pair<Player, Position>(Player.Black, new Position(Column.C, Line.One)));
+		e1.add(new Pair<Player, Position>(Player.Black, new Position(Column.D, Line.One)));
+		e1.add(new Pair<Player, Position>(Player.Black, new Position(Column.E, Line.One)));
+		e1.add(new Pair<Player, Position>(Player.Black, new Position(Column.F, Line.One)));
+		e1.add(new Pair<Player, Position>(Player.Black, new Position(Column.G, Line.One)));
+		e1.add(new Pair<Player, Position>(null, new Position(Column.H, Line.One)));
 
-		List<Pair<Player, Position>> l2 = new ArrayList<Pair<Player, Position>>();
+		Set<Pair<Player, Position>> e2 = new TreeSet<Pair<Player, Position>>();
 		for (Pair<Player, Position> pair : board) {
-			l2.add(pair);
+			e2.add(pair);
 		}
 
-		assertEquals(l1.size(), l2.size());
-		for (int i = 0; i < l1.size(); ++i) {
-			assertEquals(l1.get(i), l2.get(i));
-		}
+		assertEquals(e1.size(), e2.size());
+		assertTrue(e1.containsAll(e2));
 	}
 }
