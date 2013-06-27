@@ -25,6 +25,10 @@ public class Board implements Iterable<Pair<Player, Position>> {
 	}
 
 	public Player get(Position p) {
+		if (p.line == null || p.column == null) {
+			return null;
+		}
+
 		int xoffset = 0;
 
 		switch (p.line) {

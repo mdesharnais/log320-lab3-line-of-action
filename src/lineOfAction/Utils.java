@@ -33,154 +33,212 @@ public class Utils {
 
 		for (Pair<Player, Position> pair : board) {
 			if (pair.item1 != null && pair.item1 == player) {
-				int moveLength;
-				// TODO Generate every movement that the player is allowed to
-				// perform.
+				int horizontalMoveLength = 1;
+				int verticalMoveLength = 1;
+				int diagonalUpperLeftToLowerRightMoveLength = 1;
+				int diagonalLowerLeftToUpperRightMoveLength = 1;
 
-				// Vertical movements
-				moveLength = 0;
-				for (Line l : Line.values()) {
-					if (board.get(new Position(pair.item2.column, l)) != null) {
-						moveLength += 1;
+				// Initial position
+				int x = pair.item2.column.ordinal();
+				int y = pair.item2.line.ordinal();
+				Position source = pair.item2;
+
+				// First, we make a pass to count the length of every moves
+				for (int i = 1; i < 8; ++i) {
+					Column leftCol = x - i >= 0 ? Column.values()[x - i] : null;
+					Column rightCol = x + i < 8 ? Column.values()[x + i] : null;
+					Line upLine = y + i < 8 ? Line.values()[y + i] : null;
+					Line downLine = y - i >= 0 ? Line.values()[y - i] : null;
+
+					// Horizontal left
+					if (board.get(new Position(leftCol, source.line)) != null) {
+						horizontalMoveLength += 1;
+					}
+
+					// Horizontal right
+					if (board.get(new Position(rightCol, source.line)) != null) {
+						horizontalMoveLength += 1;
+					}
+
+					// Vertical up
+					if (board.get(new Position(source.column, upLine)) != null) {
+						verticalMoveLength += 1;
+					}
+
+					// Vertical down
+					if (board.get(new Position(source.column, downLine)) != null) {
+						verticalMoveLength += 1;
+					}
+
+					// Diagonal upper left
+					if (board.get(new Position(leftCol, upLine)) != null) {
+						diagonalUpperLeftToLowerRightMoveLength += 1;
+					}
+
+					// Diagonal upper right
+					if (board.get(new Position(rightCol, upLine)) != null) {
+						diagonalLowerLeftToUpperRightMoveLength += 1;
+					}
+
+					// Diagonal lower left
+					if (board.get(new Position(leftCol, downLine)) != null) {
+						diagonalLowerLeftToUpperRightMoveLength += 1;
+					}
+
+					// Diagonal lower right
+					if (board.get(new Position(rightCol, downLine)) != null) {
+						diagonalUpperLeftToLowerRightMoveLength += 1;
 					}
 				}
 
-				final int pos = pair.item2.line.ordinal();
-				final int up = pos + moveLength;
-				final int down = pos - moveLength;
-				boolean upIsOk = (up <= 7);
-				boolean downIsOk = (down >= 0);
+				boolean horizontalLeft = (x - horizontalMoveLength) >= 0;
+				boolean horizontalRight = (x + horizontalMoveLength) < 8;
+				boolean verticalUp = (y + verticalMoveLength) < 8;
+				boolean verticalDown = (y - verticalMoveLength) >= 0;
+				boolean diagonalUpperLeft = (x - diagonalUpperLeftToLowerRightMoveLength) >= 0
+					&& (y + diagonalUpperLeftToLowerRightMoveLength) < 8;
+				boolean diagonalUpperRight = (x + diagonalLowerLeftToUpperRightMoveLength) < 8
+					&& (y + diagonalLowerLeftToUpperRightMoveLength) < 8;
+				boolean diagonalLowerLeft = (x - diagonalLowerLeftToUpperRightMoveLength) >= 0
+					&& (y - diagonalLowerLeftToUpperRightMoveLength) >= 0;
+				boolean diagonalLowerRight = (x + diagonalUpperLeftToLowerRightMoveLength) < 8
+					&& (y - diagonalUpperLeftToLowerRightMoveLength) >= 0;
 
-				for (int i = 0; i < 7; ++i) {
-					if (upIsOk && pos < i && i <= up) {
-						Player p = board.get(new Position(pair.item2.column, Line.values()[i]));
-						if (p != null) {
-							// There is a checker between the current position
-							// and the upper arrival position
-							if (i == up) {
-								if (p != player) {
-									// Yes, we can capture an enemy checker
-								} else {
-									// No, we can not capture a friendly checker
-									upIsOk = false;
-								}
-							} else {
-								if (p != player) {
-									// No, we can not jump over an enemy checker
-									upIsOk = false;
-								} else {
-									// Yes, we can jump over a friendly checker
-								}
-							}
-						}
+				// Second, we make a pass to generate the moves
+				for (int i = 1; i < 8; ++i) {
+					Column leftCol = x - i >= 0 ? Column.values()[x - i] : null;
+					Column rightCol = x + i < 8 ? Column.values()[x + i] : null;
+					Line upLine = y + i < 8 ? Line.values()[y + i] : null;
+					Line downLine = y - i >= 0 ? Line.values()[y - i] : null;
+
+					if (horizontalLeft && i <= horizontalMoveLength) {
+						horizontalLeft = isLegalMove(board, player,
+							new Position(leftCol, source.line),
+							i == horizontalMoveLength);
 					}
 
-					if (downIsOk && up <= i && i < pos) {
-						Player p = board.get(new Position(pair.item2.column, Line.values()[i]));
-						if (p != null) {
-							// There is a checker between the current position
-							// and the upper arrival position
-							if (i == down) {
-								if (p != player) {
-									// Yes, we can capture an enemy checker
-								} else {
-									// No, we can not capture a friendly checker
-									downIsOk = false;
-								}
-							} else {
-								if (p != player) {
-									// No, we can not jump over an enemy checker
-									downIsOk = false;
-								} else {
-									// Yes, we can jump over a friendly checker
-								}
-							}
-						}
+					if (horizontalRight && i <= horizontalMoveLength) {
+						horizontalRight = isLegalMove(board, player,
+							new Position(rightCol, source.line),
+							i == horizontalMoveLength);
 					}
-				}
 
-				if (upIsOk) {
-					list.add(new Movement(pair.item2, new Position(pair.item2.column, Line.values()[up])));
-				}
+					if (verticalUp && i <= verticalMoveLength) {
+						verticalUp = isLegalMove(board, player,
+							new Position(source.column, upLine),
+							i == verticalMoveLength);
+					}
 
-				if (downIsOk) {
-					list.add(new Movement(pair.item2, new Position(pair.item2.column, Line.values()[down])));
-				}
+					if (verticalDown && i <= verticalMoveLength) {
+						verticalDown = isLegalMove(board, player,
+							new Position(source.column, downLine),
+							i == verticalMoveLength);
+					}
 
-				// Horizontal movements
+					if (diagonalUpperLeft && i <= diagonalUpperLeftToLowerRightMoveLength) {
+						diagonalUpperLeft = isLegalMove(board, player,
+							new Position(leftCol, upLine),
+							i == diagonalUpperLeftToLowerRightMoveLength);
+					}
 
-				moveLength = 0;
-				for (Column c : Column.values()) {
-					if (board.get(new Position(c, pair.item2.line)) != null) {
-						moveLength += 1;
+					if (diagonalUpperRight && i <= diagonalLowerLeftToUpperRightMoveLength) {
+						diagonalUpperRight = isLegalMove(board, player,
+							new Position(rightCol, upLine),
+							i == diagonalLowerLeftToUpperRightMoveLength);
+					}
+
+					if (diagonalLowerLeft && i <= diagonalLowerLeftToUpperRightMoveLength) {
+						diagonalLowerLeft = isLegalMove(board, player,
+							new Position(leftCol, downLine),
+							i == diagonalLowerLeftToUpperRightMoveLength);
+					}
+
+					if (diagonalLowerRight && i <= diagonalUpperLeftToLowerRightMoveLength) {
+						diagonalLowerRight = isLegalMove(board, player,
+							new Position(rightCol, downLine),
+							i == diagonalUpperLeftToLowerRightMoveLength);
 					}
 				}
 
-				final int columnPos = pair.item2.column.ordinal();
-				final int right = columnPos + moveLength;
-				final int left = columnPos - moveLength;
-				boolean rightIsOk = (right <= 7);
-				boolean leftIsOk = (left >= 0);
-
-				for (int i = 0; i < 7; ++i) {
-					Player p = board.get(new Position(Column.values()[i], pair.item2.line));
-					if (rightIsOk && pos < i && i <= right) {
-						if (p != null) {
-							// There is a checker between the current position
-							// and the upper arrival position
-							if (i == right) {
-								if (p != player) {
-									// Yes, we can capture an enemy checker
-								} else {
-									// No, we can not capture a friendly checker
-									rightIsOk = false;
-								}
-							} else {
-								if (p != player) {
-									// No, we can not jump over an enemy checker
-									rightIsOk = false;
-								} else {
-									// Yes, we can jump over a friendly checker
-								}
-							}
-						}
-					}
-
-					if (leftIsOk && left <= i && i < pos) {
-						if (p != null) {
-							// There is a checker between the current position
-							// and the upper arrival position
-							if (i == left) {
-								if (p != player) {
-									// Yes, we can capture an enemy checker
-								} else {
-									// No, we can not capture a friendly checker
-									leftIsOk = false;
-								}
-							} else {
-								if (p != player) {
-									// No, we can not jump over an enemy checker
-									leftIsOk = false;
-								} else {
-									// Yes, we can jump over a friendly checker
-								}
-							}
-						}
-					}
+				if (horizontalLeft) {
+					list.add(new Movement(source,
+						new Position(
+							Column.values()[x - horizontalMoveLength],
+							source.line)));
 				}
 
-				if (rightIsOk) {
-					list.add(new Movement(pair.item2, new Position(Column.values()[right], pair.item2.line)));
+				if (horizontalRight) {
+					list.add(new Movement(source,
+						new Position(
+							Column.values()[x + horizontalMoveLength],
+							source.line)));
 				}
 
-				if (leftIsOk) {
-					list.add(new Movement(pair.item2, new Position(Column.values()[left], pair.item2.line)));
+				if (verticalUp) {
+					list.add(new Movement(source,
+						new Position(
+							source.column,
+							Line.values()[y + verticalMoveLength])));
 				}
 
-				// Diagnoal movements
+				if (verticalDown) {
+					list.add(new Movement(source,
+						new Position(
+							source.column,
+							Line.values()[y - verticalMoveLength])));
+				}
+				if (diagonalUpperLeft) {
+					list.add(new Movement(source,
+						new Position(
+							Column.values()[x - diagonalUpperLeftToLowerRightMoveLength],
+							Line.values()[y + diagonalUpperLeftToLowerRightMoveLength])));
+				}
+				if (diagonalUpperRight) {
+					list.add(new Movement(source,
+						new Position(
+							Column.values()[x + diagonalLowerLeftToUpperRightMoveLength],
+							Line.values()[y + diagonalLowerLeftToUpperRightMoveLength])));
+				}
+				if (diagonalLowerLeft) {
+					list.add(new Movement(source,
+						new Position(
+							Column.values()[x - diagonalLowerLeftToUpperRightMoveLength],
+							Line.values()[y - diagonalLowerLeftToUpperRightMoveLength])));
+				}
+				if (diagonalLowerRight) {
+					list.add(new Movement(source,
+						new Position(
+							Column.values()[x + diagonalUpperLeftToLowerRightMoveLength],
+							Line.values()[y - diagonalUpperLeftToLowerRightMoveLength])));
+				}
 			}
 		}
 
 		return list;
+	}
+
+	private static boolean isLegalMove(Board board, Player player, Position arrival, boolean isFinalDst) {
+		Player p = board.get(arrival);
+		if (p == null) {
+			return true;
+		}
+
+		if (isFinalDst) {
+			if (p == player) {
+				// We can not capture a friendly checker
+				return false;
+			} else {
+				// We can capture an enemy checker
+			}
+		} else {
+			if (p == player) {
+				// We can jump over a friendly checker
+			} else {
+				// We can not jump over an enemy checker
+				return false;
+			}
+		}
+
+		return true;
 	}
 }

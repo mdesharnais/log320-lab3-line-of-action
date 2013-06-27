@@ -12,7 +12,7 @@ public class Pair<T1 extends Comparable<T1>, T2 extends Comparable<T2>> implemen
 	@Override
 	public String toString() {
 		return "(" + Pair.toStringOrDefault(this.item1, "null") + ","
-				+ Pair.toStringOrDefault(this.item2, "null") + ")";
+			+ Pair.toStringOrDefault(this.item2, "null") + ")";
 	}
 
 	@Override
@@ -20,6 +20,7 @@ public class Pair<T1 extends Comparable<T1>, T2 extends Comparable<T2>> implemen
 		if (obj == null) {
 			return false;
 		}
+
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
