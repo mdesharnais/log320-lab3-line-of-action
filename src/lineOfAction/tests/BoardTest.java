@@ -9,6 +9,7 @@ import java.util.TreeSet;
 import lineOfAction.Board;
 import lineOfAction.Column;
 import lineOfAction.Line;
+import lineOfAction.Movement;
 import lineOfAction.Pair;
 import lineOfAction.Player;
 import lineOfAction.Position;
@@ -213,5 +214,33 @@ public class BoardTest {
 
 		assertEquals(e1.size(), e2.size());
 		assertTrue(e1.containsAll(e2));
+	}
+
+	@Test
+	public void testConstructor() {
+		Board board = new Board(new char[] {
+			'0', '2', '2', '2', '2', '2', '2', '0',
+			'4', '0', '0', '0', '0', '0', '0', '4',
+			'4', '0', '0', '0', '0', '0', '0', '4',
+			'4', '0', '0', '0', '0', '0', '0', '4',
+			'4', '0', '0', '0', '0', '0', '0', '4',
+			'4', '0', '0', '0', '0', '0', '0', '4',
+			'4', '0', '0', '0', '0', '0', '0', '4',
+			'0', '2', '2', '2', '2', '2', '2', '0'
+		});
+
+		Position source = new Position(Column.C, Line.Eight);
+		Position destination = new Position(Column.A, Line.Six);
+		Movement movement = new Movement(source, destination);
+		Board board2 = new Board(board, movement);
+
+		assertEquals(board2.toString(), ". O . O O O O .\n" +
+			"X . . . . . . X\n" +
+			"O . . . . . . X\n" +
+			"X . . . . . . X\n" +
+			"X . . . . . . X\n" +
+			"X . . . . . . X\n" +
+			"X . . . . . . X\n" +
+			". O O O O O O .\n");
 	}
 }

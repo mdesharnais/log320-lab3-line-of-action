@@ -2,7 +2,7 @@ package lineOfAction;
 
 import java.util.Iterator;
 
-public class Board implements Iterable<Pair<Player, Position>> {
+public class Board implements Iterable<Pair<Player, Position>>, Comparable<Board> {
 	// Strange, it seems require to use package visibility to let the iterator use this member.
 	final Player[] data = new Player[64];
 
@@ -24,70 +24,21 @@ public class Board implements Iterable<Pair<Player, Position>> {
 		}
 	}
 
+	public Board(Board that, Movement movement) {
+		int departureOffset = offset(movement.departure);
+		int arrivalOffset = offset(movement.arrival);
+
+		System.arraycopy(that.data, 0, this.data, 0, 64);
+		this.data[arrivalOffset] = this.data[departureOffset];
+		this.data[departureOffset] = null;
+	}
+
 	public Player get(Position p) {
 		if (p.line == null || p.column == null) {
 			return null;
 		}
 
-		int xoffset = 0;
-
-		switch (p.line) {
-		case One:
-			xoffset = 7;
-			break;
-		case Two:
-			xoffset = 6;
-			break;
-		case Three:
-			xoffset = 5;
-			break;
-		case Four:
-			xoffset = 4;
-			break;
-		case Five:
-			xoffset = 3;
-			break;
-		case Six:
-			xoffset = 2;
-			break;
-		case Seven:
-			xoffset = 1;
-			break;
-		case Eight:
-			xoffset = 0;
-			break;
-		}
-
-		int yoffset = 0;
-
-		switch (p.column) {
-		case A:
-			yoffset = 0;
-			break;
-		case B:
-			yoffset = 1;
-			break;
-		case C:
-			yoffset = 2;
-			break;
-		case D:
-			yoffset = 3;
-			break;
-		case E:
-			yoffset = 4;
-			break;
-		case F:
-			yoffset = 5;
-			break;
-		case G:
-			yoffset = 6;
-			break;
-		case H:
-			yoffset = 7;
-			break;
-		}
-
-		return this.data[xoffset * 8 + yoffset];
+		return this.data[offset(p)];
 	}
 
 	@Override
@@ -194,5 +145,81 @@ public class Board implements Iterable<Pair<Player, Position>> {
 				throw new UnsupportedOperationException();
 			}
 		};
+	}
+
+	@Override
+	public int compareTo(Board that) {
+		Iterator<Pair<Player, Position>> it1 = iterator();
+		Iterator<Pair<Player, Position>> it2 = that.iterator();
+
+		boolean it1HasNext = it1.hasNext();
+		boolean it2HasNext = it2.hasNext();
+
+		while ((it1HasNext = it1.hasNext()) && (it2HasNext = it2.hasNext())) {
+			int result = it1.next().compareTo(it2.next());
+			if (result != 0) {
+				return result;
+			}
+		}
+
+		if (it1HasNext && !it2HasNext) {
+			return 1;
+		}
+
+		if (!it1HasNext && it2HasNext) {
+			return -1;
+		}
+
+		return 0;
+	}
+
+	private static int offset(Position p) {
+		return offset(p.line) * 8 + offset(p.column);
+	}
+
+	private static int offset(Column c) {
+		switch (c) {
+		case A:
+			return 0;
+		case B:
+			return 1;
+		case C:
+			return 2;
+		case D:
+			return 3;
+		case E:
+			return 4;
+		case F:
+			return 5;
+		case G:
+			return 6;
+		case H:
+			return 7;
+		default:
+			return -1;
+		}
+	}
+
+	private static int offset(Line l) {
+		switch (l) {
+		case One:
+			return 7;
+		case Two:
+			return 6;
+		case Three:
+			return 5;
+		case Four:
+			return 4;
+		case Five:
+			return 3;
+		case Six:
+			return 2;
+		case Seven:
+			return 1;
+		case Eight:
+			return 0;
+		default:
+			return -1;
+		}
 	}
 }
