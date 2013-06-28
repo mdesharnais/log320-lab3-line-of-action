@@ -241,4 +241,15 @@ public class Utils {
 
 		return true;
 	}
+
+	public static Player nextPlayer(Player player) {
+		switch (player) {
+		case Black:
+			return Player.White;
+		case White:
+			return Player.Black;
+		default:
+			return null;
+		}
+	}
 }
