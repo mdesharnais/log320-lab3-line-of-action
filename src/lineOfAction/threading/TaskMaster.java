@@ -10,7 +10,7 @@ public abstract class TaskMaster {
 		tasks.add(task);
 	}
 
-	public static Taskable getNextTask() {
+	static Taskable getNextTask() {
 		if (tasks.size() > 0) {
 			return tasks.remove(0);
 		}
