@@ -1,29 +1,35 @@
 package lineOfAction;
 
-public enum Line {
-	One, Two, Three, Four, Five, Six, Seven, Eight;
+public class Line {
+	public static final int One = 0;
+	public static final int Two = 1;
+	public static final int Three = 2;
+	public static final int Four = 3;
+	public static final int Five = 4;
+	public static final int Six = 5;
+	public static final int Seven = 6;
+	public static final int Eight = 7;
 
-	@Override
-	public String toString() {
-		switch (this) {
-		case One:
+	public static String toString(int line) {
+		switch (line) {
+		case Line.One:
 			return "1";
-		case Two:
+		case Line.Two:
 			return "2";
-		case Three:
+		case Line.Three:
 			return "3";
-		case Four:
+		case Line.Four:
 			return "4";
-		case Five:
+		case Line.Five:
 			return "5";
-		case Six:
+		case Line.Six:
 			return "6";
-		case Seven:
+		case Line.Seven:
 			return "7";
-		case Eight:
+		case Line.Eight:
 			return "8";
 		default:
-			return "Line";
+			return "?";
 		}
 	}
 }

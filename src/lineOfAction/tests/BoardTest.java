@@ -132,82 +132,82 @@ public class BoardTest {
 			'0', '2', '2', '2', '2', '2', '2', '0'
 		});
 
-		Set<Triplet<Player, Column, Line>> e1 = new TreeSet<Triplet<Player, Column, Line>>();
+		Set<Triplet<Player, Integer, Integer>> e1 = new TreeSet<Triplet<Player, Integer, Integer>>();
 
-		e1.add(new Triplet<Player, Column, Line>(null, Column.A, Line.Eight));
-		e1.add(new Triplet<Player, Column, Line>(Player.Black, Column.B, Line.Eight));
-		e1.add(new Triplet<Player, Column, Line>(Player.Black, Column.C, Line.Eight));
-		e1.add(new Triplet<Player, Column, Line>(Player.Black, Column.D, Line.Eight));
-		e1.add(new Triplet<Player, Column, Line>(Player.Black, Column.E, Line.Eight));
-		e1.add(new Triplet<Player, Column, Line>(Player.Black, Column.F, Line.Eight));
-		e1.add(new Triplet<Player, Column, Line>(Player.Black, Column.G, Line.Eight));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.H, Line.Eight));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.A, Line.Eight));
+		e1.add(new Triplet<Player, Integer, Integer>(Player.Black, Column.B, Line.Eight));
+		e1.add(new Triplet<Player, Integer, Integer>(Player.Black, Column.C, Line.Eight));
+		e1.add(new Triplet<Player, Integer, Integer>(Player.Black, Column.D, Line.Eight));
+		e1.add(new Triplet<Player, Integer, Integer>(Player.Black, Column.E, Line.Eight));
+		e1.add(new Triplet<Player, Integer, Integer>(Player.Black, Column.F, Line.Eight));
+		e1.add(new Triplet<Player, Integer, Integer>(Player.Black, Column.G, Line.Eight));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.H, Line.Eight));
 
-		e1.add(new Triplet<Player, Column, Line>(Player.White, Column.A, Line.Seven));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.B, Line.Seven));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.C, Line.Seven));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.D, Line.Seven));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.E, Line.Seven));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.F, Line.Seven));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.G, Line.Seven));
-		e1.add(new Triplet<Player, Column, Line>(Player.White, Column.H, Line.Seven));
+		e1.add(new Triplet<Player, Integer, Integer>(Player.White, Column.A, Line.Seven));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.B, Line.Seven));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.C, Line.Seven));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.D, Line.Seven));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.E, Line.Seven));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.F, Line.Seven));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.G, Line.Seven));
+		e1.add(new Triplet<Player, Integer, Integer>(Player.White, Column.H, Line.Seven));
 
-		e1.add(new Triplet<Player, Column, Line>(Player.White, Column.A, Line.Six));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.B, Line.Six));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.C, Line.Six));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.D, Line.Six));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.E, Line.Six));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.F, Line.Six));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.G, Line.Six));
-		e1.add(new Triplet<Player, Column, Line>(Player.White, Column.H, Line.Six));
+		e1.add(new Triplet<Player, Integer, Integer>(Player.White, Column.A, Line.Six));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.B, Line.Six));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.C, Line.Six));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.D, Line.Six));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.E, Line.Six));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.F, Line.Six));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.G, Line.Six));
+		e1.add(new Triplet<Player, Integer, Integer>(Player.White, Column.H, Line.Six));
 
-		e1.add(new Triplet<Player, Column, Line>(Player.White, Column.A, Line.Five));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.B, Line.Five));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.C, Line.Five));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.D, Line.Five));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.E, Line.Five));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.F, Line.Five));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.G, Line.Five));
-		e1.add(new Triplet<Player, Column, Line>(Player.White, Column.H, Line.Five));
+		e1.add(new Triplet<Player, Integer, Integer>(Player.White, Column.A, Line.Five));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.B, Line.Five));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.C, Line.Five));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.D, Line.Five));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.E, Line.Five));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.F, Line.Five));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.G, Line.Five));
+		e1.add(new Triplet<Player, Integer, Integer>(Player.White, Column.H, Line.Five));
 
-		e1.add(new Triplet<Player, Column, Line>(Player.White, Column.A, Line.Four));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.B, Line.Four));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.C, Line.Four));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.D, Line.Four));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.E, Line.Four));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.F, Line.Four));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.G, Line.Four));
-		e1.add(new Triplet<Player, Column, Line>(Player.White, Column.H, Line.Four));
+		e1.add(new Triplet<Player, Integer, Integer>(Player.White, Column.A, Line.Four));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.B, Line.Four));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.C, Line.Four));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.D, Line.Four));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.E, Line.Four));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.F, Line.Four));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.G, Line.Four));
+		e1.add(new Triplet<Player, Integer, Integer>(Player.White, Column.H, Line.Four));
 
-		e1.add(new Triplet<Player, Column, Line>(Player.White, Column.A, Line.Three));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.B, Line.Three));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.C, Line.Three));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.D, Line.Three));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.E, Line.Three));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.F, Line.Three));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.G, Line.Three));
-		e1.add(new Triplet<Player, Column, Line>(Player.White, Column.H, Line.Three));
+		e1.add(new Triplet<Player, Integer, Integer>(Player.White, Column.A, Line.Three));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.B, Line.Three));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.C, Line.Three));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.D, Line.Three));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.E, Line.Three));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.F, Line.Three));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.G, Line.Three));
+		e1.add(new Triplet<Player, Integer, Integer>(Player.White, Column.H, Line.Three));
 
-		e1.add(new Triplet<Player, Column, Line>(Player.White, Column.A, Line.Two));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.B, Line.Two));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.C, Line.Two));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.D, Line.Two));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.E, Line.Two));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.F, Line.Two));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.G, Line.Two));
-		e1.add(new Triplet<Player, Column, Line>(Player.White, Column.H, Line.Two));
+		e1.add(new Triplet<Player, Integer, Integer>(Player.White, Column.A, Line.Two));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.B, Line.Two));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.C, Line.Two));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.D, Line.Two));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.E, Line.Two));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.F, Line.Two));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.G, Line.Two));
+		e1.add(new Triplet<Player, Integer, Integer>(Player.White, Column.H, Line.Two));
 
-		e1.add(new Triplet<Player, Column, Line>(null, Column.A, Line.One));
-		e1.add(new Triplet<Player, Column, Line>(Player.Black, Column.B, Line.One));
-		e1.add(new Triplet<Player, Column, Line>(Player.Black, Column.C, Line.One));
-		e1.add(new Triplet<Player, Column, Line>(Player.Black, Column.D, Line.One));
-		e1.add(new Triplet<Player, Column, Line>(Player.Black, Column.E, Line.One));
-		e1.add(new Triplet<Player, Column, Line>(Player.Black, Column.F, Line.One));
-		e1.add(new Triplet<Player, Column, Line>(Player.Black, Column.G, Line.One));
-		e1.add(new Triplet<Player, Column, Line>(null, Column.H, Line.One));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.A, Line.One));
+		e1.add(new Triplet<Player, Integer, Integer>(Player.Black, Column.B, Line.One));
+		e1.add(new Triplet<Player, Integer, Integer>(Player.Black, Column.C, Line.One));
+		e1.add(new Triplet<Player, Integer, Integer>(Player.Black, Column.D, Line.One));
+		e1.add(new Triplet<Player, Integer, Integer>(Player.Black, Column.E, Line.One));
+		e1.add(new Triplet<Player, Integer, Integer>(Player.Black, Column.F, Line.One));
+		e1.add(new Triplet<Player, Integer, Integer>(Player.Black, Column.G, Line.One));
+		e1.add(new Triplet<Player, Integer, Integer>(null, Column.H, Line.One));
 
-		Set<Triplet<Player, Column, Line>> e2 = new TreeSet<Triplet<Player, Column, Line>>();
-		for (Triplet<Player, Column, Line> pair : board) {
+		Set<Triplet<Player, Integer, Integer>> e2 = new TreeSet<Triplet<Player, Integer, Integer>>();
+		for (Triplet<Player, Integer, Integer> pair : board) {
 			e2.add(pair);
 		}
 

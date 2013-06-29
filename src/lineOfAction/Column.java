@@ -1,5 +1,35 @@
 package lineOfAction;
 
-public enum Column {
-	A, B, C, D, E, F, G, H
+public class Column {
+	public static final int A = 0;
+	public static final int B = 1;
+	public static final int C = 2;
+	public static final int D = 3;
+	public static final int E = 4;
+	public static final int F = 5;
+	public static final int G = 6;
+	public static final int H = 7;
+
+	public static String toString(int column) {
+		switch (column) {
+		case 0:
+			return "A";
+		case 1:
+			return "B";
+		case 2:
+			return "C";
+		case 3:
+			return "D";
+		case 4:
+			return "E";
+		case 5:
+			return "F";
+		case 6:
+			return "G";
+		case 7:
+			return "H";
+		default:
+			return "?";
+		}
+	}
 }

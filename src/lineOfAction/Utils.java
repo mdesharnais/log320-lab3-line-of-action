@@ -30,28 +30,24 @@ public class Utils {
 
 	public static Iterable<Movement> generateMovements(Board board, Player player) {
 		List<Movement> list = new ArrayList<Movement>();
-		Column[] columnValues = Column.values();
-		Line[] lineValues = Line.values();
 
-		for (Triplet<Player, Column, Line> pair : board) {
-			if (pair.item1 != null && pair.item1 == player) {
+		for (Triplet<Player, Integer, Integer> tuple : board) {
+			if (tuple.item1 != null && tuple.item1 == player) {
 				int horizontalMoveLength = 1;
 				int verticalMoveLength = 1;
 				int diagonalUpperLeftToLowerRightMoveLength = 1;
 				int diagonalLowerLeftToUpperRightMoveLength = 1;
 
 				// Initial position
-				Column column = pair.item2;
-				Line line = pair.item3;
-				int x = column.ordinal();
-				int y = line.ordinal();
+				int column = tuple.item2;
+				int line = tuple.item3;
 
 				// First, we make a pass to count the length of every moves
 				for (int i = 1; i < 8; ++i) {
-					Column leftCol = x - i >= 0 ? columnValues[x - i] : null;
-					Column rightCol = x + i < 8 ? columnValues[x + i] : null;
-					Line upLine = y + i < 8 ? lineValues[y + i] : null;
-					Line downLine = y - i >= 0 ? lineValues[y - i] : null;
+					int leftCol = column - i;
+					int rightCol = column + i;
+					int upLine = line + i;
+					int downLine = line - i;
 
 					// Horizontal left
 					if (board.get(leftCol, line) != null) {
@@ -94,25 +90,25 @@ public class Utils {
 					}
 				}
 
-				boolean horizontalLeft = (x - horizontalMoveLength) >= 0;
-				boolean horizontalRight = (x + horizontalMoveLength) < 8;
-				boolean verticalUp = (y + verticalMoveLength) < 8;
-				boolean verticalDown = (y - verticalMoveLength) >= 0;
-				boolean diagonalUpperLeft = (x - diagonalUpperLeftToLowerRightMoveLength) >= 0
-					&& (y + diagonalUpperLeftToLowerRightMoveLength) < 8;
-				boolean diagonalUpperRight = (x + diagonalLowerLeftToUpperRightMoveLength) < 8
-					&& (y + diagonalLowerLeftToUpperRightMoveLength) < 8;
-				boolean diagonalLowerLeft = (x - diagonalLowerLeftToUpperRightMoveLength) >= 0
-					&& (y - diagonalLowerLeftToUpperRightMoveLength) >= 0;
-				boolean diagonalLowerRight = (x + diagonalUpperLeftToLowerRightMoveLength) < 8
-					&& (y - diagonalUpperLeftToLowerRightMoveLength) >= 0;
+				boolean horizontalLeft = (column - horizontalMoveLength) >= 0;
+				boolean horizontalRight = (column + horizontalMoveLength) < 8;
+				boolean verticalUp = (line + verticalMoveLength) < 8;
+				boolean verticalDown = (line - verticalMoveLength) >= 0;
+				boolean diagonalUpperLeft = (column - diagonalUpperLeftToLowerRightMoveLength) >= 0
+					&& (line + diagonalUpperLeftToLowerRightMoveLength) < 8;
+				boolean diagonalUpperRight = (column + diagonalLowerLeftToUpperRightMoveLength) < 8
+					&& (line + diagonalLowerLeftToUpperRightMoveLength) < 8;
+				boolean diagonalLowerLeft = (column - diagonalLowerLeftToUpperRightMoveLength) >= 0
+					&& (line - diagonalLowerLeftToUpperRightMoveLength) >= 0;
+				boolean diagonalLowerRight = (column + diagonalUpperLeftToLowerRightMoveLength) < 8
+					&& (line - diagonalUpperLeftToLowerRightMoveLength) >= 0;
 
 				// Second, we make a pass to generate the moves
 				for (int i = 1; i < 8; ++i) {
-					Column leftCol = x - i >= 0 ? columnValues[x - i] : null;
-					Column rightCol = x + i < 8 ? columnValues[x + i] : null;
-					Line upLine = y + i < 8 ? lineValues[y + i] : null;
-					Line downLine = y - i >= 0 ? lineValues[y - i] : null;
+					int leftCol = column - i;
+					int rightCol = column + i;
+					int upLine = line + i;
+					int downLine = line - i;
 
 					if (horizontalLeft && i <= horizontalMoveLength) {
 						horizontalLeft = isLegalMove(board, player, leftCol, line,
@@ -157,46 +153,46 @@ public class Utils {
 
 				if (horizontalLeft) {
 					list.add(new Movement(column, line,
-						columnValues[x - horizontalMoveLength],
+						column - horizontalMoveLength,
 						line));
 				}
 
 				if (horizontalRight) {
 					list.add(new Movement(column, line,
-						columnValues[x + horizontalMoveLength],
+						column + horizontalMoveLength,
 						line));
 				}
 
 				if (verticalUp) {
 					list.add(new Movement(column, line,
 						column,
-						lineValues[y + verticalMoveLength]));
+						line + verticalMoveLength));
 				}
 
 				if (verticalDown) {
 					list.add(new Movement(column, line,
 						column,
-						lineValues[y - verticalMoveLength]));
+						line - verticalMoveLength));
 				}
 				if (diagonalUpperLeft) {
 					list.add(new Movement(column, line,
-						columnValues[x - diagonalUpperLeftToLowerRightMoveLength],
-						lineValues[y + diagonalUpperLeftToLowerRightMoveLength]));
+						column - diagonalUpperLeftToLowerRightMoveLength,
+						line + diagonalUpperLeftToLowerRightMoveLength));
 				}
 				if (diagonalUpperRight) {
 					list.add(new Movement(column, line,
-						columnValues[x + diagonalLowerLeftToUpperRightMoveLength],
-						lineValues[y + diagonalLowerLeftToUpperRightMoveLength]));
+						column + diagonalLowerLeftToUpperRightMoveLength,
+						line + diagonalLowerLeftToUpperRightMoveLength));
 				}
 				if (diagonalLowerLeft) {
 					list.add(new Movement(column, line,
-						columnValues[x - diagonalLowerLeftToUpperRightMoveLength],
-						lineValues[y - diagonalLowerLeftToUpperRightMoveLength]));
+						column - diagonalLowerLeftToUpperRightMoveLength,
+						line - diagonalLowerLeftToUpperRightMoveLength));
 				}
 				if (diagonalLowerRight) {
 					list.add(new Movement(column, line,
-						columnValues[x + diagonalUpperLeftToLowerRightMoveLength],
-						lineValues[y - diagonalUpperLeftToLowerRightMoveLength]));
+						column + diagonalUpperLeftToLowerRightMoveLength,
+						line - diagonalUpperLeftToLowerRightMoveLength));
 				}
 			}
 		}
@@ -204,8 +200,8 @@ public class Utils {
 		return list;
 	}
 
-	private static boolean isLegalMove(Board b, Player p, Column c, Line l, boolean isFinalDst) {
-		Player currentPlayer = b.get(c, l);
+	private static boolean isLegalMove(Board b, Player p, int column, int line, boolean isFinalDst) {
+		Player currentPlayer = b.get(column, line);
 		if (currentPlayer == null) {
 			return true;
 		}

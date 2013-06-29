@@ -83,6 +83,9 @@ public class UtilsTest {
 			e2.add(m);
 		}
 
+		Set<Movement> e3 = new TreeSet<Movement>(e1);
+		e3.removeAll(e2);
+
 		assertEquals(e1.size(), e2.size());
 		assertTrue(e1.containsAll(e2));
 	}
