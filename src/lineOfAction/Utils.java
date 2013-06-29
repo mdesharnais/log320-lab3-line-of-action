@@ -30,8 +30,10 @@ public class Utils {
 
 	public static Iterable<Movement> generateMovements(Board board, Player player) {
 		List<Movement> list = new ArrayList<Movement>();
+		Column[] columnValues = Column.values();
+		Line[] lineValues = Line.values();
 
-		for (Pair<Player, Position> pair : board) {
+		for (Triplet<Player, Column, Line> pair : board) {
 			if (pair.item1 != null && pair.item1 == player) {
 				int horizontalMoveLength = 1;
 				int verticalMoveLength = 1;
@@ -39,54 +41,55 @@ public class Utils {
 				int diagonalLowerLeftToUpperRightMoveLength = 1;
 
 				// Initial position
-				int x = pair.item2.column.ordinal();
-				int y = pair.item2.line.ordinal();
-				Position source = pair.item2;
+				Column column = pair.item2;
+				Line line = pair.item3;
+				int x = column.ordinal();
+				int y = line.ordinal();
 
 				// First, we make a pass to count the length of every moves
 				for (int i = 1; i < 8; ++i) {
-					Column leftCol = x - i >= 0 ? Column.values()[x - i] : null;
-					Column rightCol = x + i < 8 ? Column.values()[x + i] : null;
-					Line upLine = y + i < 8 ? Line.values()[y + i] : null;
-					Line downLine = y - i >= 0 ? Line.values()[y - i] : null;
+					Column leftCol = x - i >= 0 ? columnValues[x - i] : null;
+					Column rightCol = x + i < 8 ? columnValues[x + i] : null;
+					Line upLine = y + i < 8 ? lineValues[y + i] : null;
+					Line downLine = y - i >= 0 ? lineValues[y - i] : null;
 
 					// Horizontal left
-					if (board.get(new Position(leftCol, source.line)) != null) {
+					if (board.get(leftCol, line) != null) {
 						horizontalMoveLength += 1;
 					}
 
 					// Horizontal right
-					if (board.get(new Position(rightCol, source.line)) != null) {
+					if (board.get(rightCol, line) != null) {
 						horizontalMoveLength += 1;
 					}
 
 					// Vertical up
-					if (board.get(new Position(source.column, upLine)) != null) {
+					if (board.get(column, upLine) != null) {
 						verticalMoveLength += 1;
 					}
 
 					// Vertical down
-					if (board.get(new Position(source.column, downLine)) != null) {
+					if (board.get(column, downLine) != null) {
 						verticalMoveLength += 1;
 					}
 
 					// Diagonal upper left
-					if (board.get(new Position(leftCol, upLine)) != null) {
+					if (board.get(leftCol, upLine) != null) {
 						diagonalUpperLeftToLowerRightMoveLength += 1;
 					}
 
 					// Diagonal upper right
-					if (board.get(new Position(rightCol, upLine)) != null) {
+					if (board.get(rightCol, upLine) != null) {
 						diagonalLowerLeftToUpperRightMoveLength += 1;
 					}
 
 					// Diagonal lower left
-					if (board.get(new Position(leftCol, downLine)) != null) {
+					if (board.get(leftCol, downLine) != null) {
 						diagonalLowerLeftToUpperRightMoveLength += 1;
 					}
 
 					// Diagonal lower right
-					if (board.get(new Position(rightCol, downLine)) != null) {
+					if (board.get(rightCol, downLine) != null) {
 						diagonalUpperLeftToLowerRightMoveLength += 1;
 					}
 				}
@@ -106,110 +109,94 @@ public class Utils {
 
 				// Second, we make a pass to generate the moves
 				for (int i = 1; i < 8; ++i) {
-					Column leftCol = x - i >= 0 ? Column.values()[x - i] : null;
-					Column rightCol = x + i < 8 ? Column.values()[x + i] : null;
-					Line upLine = y + i < 8 ? Line.values()[y + i] : null;
-					Line downLine = y - i >= 0 ? Line.values()[y - i] : null;
+					Column leftCol = x - i >= 0 ? columnValues[x - i] : null;
+					Column rightCol = x + i < 8 ? columnValues[x + i] : null;
+					Line upLine = y + i < 8 ? lineValues[y + i] : null;
+					Line downLine = y - i >= 0 ? lineValues[y - i] : null;
 
 					if (horizontalLeft && i <= horizontalMoveLength) {
-						horizontalLeft = isLegalMove(board, player,
-							new Position(leftCol, source.line),
+						horizontalLeft = isLegalMove(board, player, leftCol, line,
 							i == horizontalMoveLength);
 					}
 
 					if (horizontalRight && i <= horizontalMoveLength) {
-						horizontalRight = isLegalMove(board, player,
-							new Position(rightCol, source.line),
+						horizontalRight = isLegalMove(board, player, rightCol, line,
 							i == horizontalMoveLength);
 					}
 
 					if (verticalUp && i <= verticalMoveLength) {
-						verticalUp = isLegalMove(board, player,
-							new Position(source.column, upLine),
+						verticalUp = isLegalMove(board, player, column, upLine,
 							i == verticalMoveLength);
 					}
 
 					if (verticalDown && i <= verticalMoveLength) {
-						verticalDown = isLegalMove(board, player,
-							new Position(source.column, downLine),
+						verticalDown = isLegalMove(board, player, column, downLine,
 							i == verticalMoveLength);
 					}
 
 					if (diagonalUpperLeft && i <= diagonalUpperLeftToLowerRightMoveLength) {
-						diagonalUpperLeft = isLegalMove(board, player,
-							new Position(leftCol, upLine),
+						diagonalUpperLeft = isLegalMove(board, player, leftCol, upLine,
 							i == diagonalUpperLeftToLowerRightMoveLength);
 					}
 
 					if (diagonalUpperRight && i <= diagonalLowerLeftToUpperRightMoveLength) {
-						diagonalUpperRight = isLegalMove(board, player,
-							new Position(rightCol, upLine),
+						diagonalUpperRight = isLegalMove(board, player, rightCol, upLine,
 							i == diagonalLowerLeftToUpperRightMoveLength);
 					}
 
 					if (diagonalLowerLeft && i <= diagonalLowerLeftToUpperRightMoveLength) {
-						diagonalLowerLeft = isLegalMove(board, player,
-							new Position(leftCol, downLine),
+						diagonalLowerLeft = isLegalMove(board, player, leftCol, downLine,
 							i == diagonalLowerLeftToUpperRightMoveLength);
 					}
 
 					if (diagonalLowerRight && i <= diagonalUpperLeftToLowerRightMoveLength) {
-						diagonalLowerRight = isLegalMove(board, player,
-							new Position(rightCol, downLine),
+						diagonalLowerRight = isLegalMove(board, player, rightCol, downLine,
 							i == diagonalUpperLeftToLowerRightMoveLength);
 					}
 				}
 
 				if (horizontalLeft) {
-					list.add(new Movement(source,
-						new Position(
-							Column.values()[x - horizontalMoveLength],
-							source.line)));
+					list.add(new Movement(column, line,
+						columnValues[x - horizontalMoveLength],
+						line));
 				}
 
 				if (horizontalRight) {
-					list.add(new Movement(source,
-						new Position(
-							Column.values()[x + horizontalMoveLength],
-							source.line)));
+					list.add(new Movement(column, line,
+						columnValues[x + horizontalMoveLength],
+						line));
 				}
 
 				if (verticalUp) {
-					list.add(new Movement(source,
-						new Position(
-							source.column,
-							Line.values()[y + verticalMoveLength])));
+					list.add(new Movement(column, line,
+						column,
+						lineValues[y + verticalMoveLength]));
 				}
 
 				if (verticalDown) {
-					list.add(new Movement(source,
-						new Position(
-							source.column,
-							Line.values()[y - verticalMoveLength])));
+					list.add(new Movement(column, line,
+						column,
+						lineValues[y - verticalMoveLength]));
 				}
 				if (diagonalUpperLeft) {
-					list.add(new Movement(source,
-						new Position(
-							Column.values()[x - diagonalUpperLeftToLowerRightMoveLength],
-							Line.values()[y + diagonalUpperLeftToLowerRightMoveLength])));
+					list.add(new Movement(column, line,
+						columnValues[x - diagonalUpperLeftToLowerRightMoveLength],
+						lineValues[y + diagonalUpperLeftToLowerRightMoveLength]));
 				}
 				if (diagonalUpperRight) {
-					list.add(new Movement(source,
-						new Position(
-							Column.values()[x + diagonalLowerLeftToUpperRightMoveLength],
-							Line.values()[y + diagonalLowerLeftToUpperRightMoveLength])));
+					list.add(new Movement(column, line,
+						columnValues[x + diagonalLowerLeftToUpperRightMoveLength],
+						lineValues[y + diagonalLowerLeftToUpperRightMoveLength]));
 				}
 				if (diagonalLowerLeft) {
-					list.add(new Movement(source,
-						new Position(
-							Column.values()[x - diagonalLowerLeftToUpperRightMoveLength],
-							Line.values()[y - diagonalLowerLeftToUpperRightMoveLength])));
+					list.add(new Movement(column, line,
+						columnValues[x - diagonalLowerLeftToUpperRightMoveLength],
+						lineValues[y - diagonalLowerLeftToUpperRightMoveLength]));
 				}
 				if (diagonalLowerRight) {
-					list.add(new Movement(source,
-						new Position(
-							Column.values()[x + diagonalUpperLeftToLowerRightMoveLength],
-							Line.values()[y - diagonalUpperLeftToLowerRightMoveLength])));
+					list.add(new Movement(column, line,
+						columnValues[x + diagonalUpperLeftToLowerRightMoveLength],
+						lineValues[y - diagonalUpperLeftToLowerRightMoveLength]));
 				}
 			}
 		}
@@ -217,21 +204,21 @@ public class Utils {
 		return list;
 	}
 
-	private static boolean isLegalMove(Board board, Player player, Position arrival, boolean isFinalDst) {
-		Player p = board.get(arrival);
-		if (p == null) {
+	private static boolean isLegalMove(Board b, Player p, Column c, Line l, boolean isFinalDst) {
+		Player currentPlayer = b.get(c, l);
+		if (currentPlayer == null) {
 			return true;
 		}
 
 		if (isFinalDst) {
-			if (p == player) {
+			if (currentPlayer == p) {
 				// We can not capture a friendly checker
 				return false;
 			} else {
 				// We can capture an enemy checker
 			}
 		} else {
-			if (p == player) {
+			if (currentPlayer == p) {
 				// We can jump over a friendly checker
 			} else {
 				// We can not jump over an enemy checker

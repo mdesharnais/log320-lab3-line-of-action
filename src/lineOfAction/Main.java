@@ -18,7 +18,7 @@ public class Main {
 		MovementTree tree = new MovementTree(board, Player.Black);
 
 		long begin = System.nanoTime();
-		play(tree, 4);
+		play(tree, 3);
 		long end = System.nanoTime();
 
 		long duration = end - begin;
@@ -27,8 +27,9 @@ public class Main {
 
 	private static void play(MovementTree tree, int depth) {
 		if (depth >= 0) {
+			int newDepth = depth - 1;
 			for (MovementTree child : tree) {
-				play(child, depth - 1);
+				play(child, newDepth);
 			}
 		}
 	}

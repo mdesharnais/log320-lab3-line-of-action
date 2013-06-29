@@ -2,7 +2,7 @@ package lineOfAction;
 
 import java.util.Iterator;
 
-public class Board implements Iterable<Pair<Player, Position>>, Comparable<Board> {
+public class Board implements Iterable<Triplet<Player, Column, Line>>, Comparable<Board> {
 	// Strange, it seems require to use package visibility to let the iterator use this member.
 	final Player[] data = new Player[64];
 
@@ -25,20 +25,20 @@ public class Board implements Iterable<Pair<Player, Position>>, Comparable<Board
 	}
 
 	public Board(Board that, Movement movement) {
-		int departureOffset = offset(movement.departure);
-		int arrivalOffset = offset(movement.arrival);
+		int sourceOffset = offset(movement.sourceLine) * 8 + offset(movement.sourceColumn);
+		int destinationOffset = offset(movement.destinationLine) * 8 + offset(movement.destinationColumn);
 
 		System.arraycopy(that.data, 0, this.data, 0, 64);
-		this.data[arrivalOffset] = this.data[departureOffset];
-		this.data[departureOffset] = null;
+		this.data[destinationOffset] = this.data[sourceOffset];
+		this.data[sourceOffset] = null;
 	}
 
-	public Player get(Position p) {
-		if (p.line == null || p.column == null) {
+	public Player get(Column c, Line l) {
+		if (c == null || l == null) {
 			return null;
 		}
 
-		return this.data[offset(p)];
+		return this.data[offset(l) * 8 + offset(c)];
 	}
 
 	@Override
@@ -68,8 +68,8 @@ public class Board implements Iterable<Pair<Player, Position>>, Comparable<Board
 	 * Traversal is in the following order A8, B8, C8 ... A7, B7, C7 ... F1, G1, H1
 	 */
 	@Override
-	public Iterator<Pair<Player, Position>> iterator() {
-		return new Iterator<Pair<Player, Position>>() {
+	public Iterator<Triplet<Player, Column, Line>> iterator() {
+		return new Iterator<Triplet<Player, Column, Line>>() {
 			int index = 0;
 
 			@Override
@@ -78,7 +78,7 @@ public class Board implements Iterable<Pair<Player, Position>>, Comparable<Board
 			}
 
 			@Override
-			public Pair<Player, Position> next() {
+			public Triplet<Player, Column, Line> next() {
 				Column c = null;
 
 				switch (this.index % 8) {
@@ -137,7 +137,7 @@ public class Board implements Iterable<Pair<Player, Position>>, Comparable<Board
 					break;
 				}
 
-				return new Pair<Player, Position>(Board.this.data[this.index++], new Position(c, l));
+				return new Triplet<Player, Column, Line>(Board.this.data[this.index++], c, l);
 			}
 
 			@Override
@@ -149,8 +149,8 @@ public class Board implements Iterable<Pair<Player, Position>>, Comparable<Board
 
 	@Override
 	public int compareTo(Board that) {
-		Iterator<Pair<Player, Position>> it1 = iterator();
-		Iterator<Pair<Player, Position>> it2 = that.iterator();
+		Iterator<Triplet<Player, Column, Line>> it1 = iterator();
+		Iterator<Triplet<Player, Column, Line>> it2 = that.iterator();
 
 		boolean it1HasNext = it1.hasNext();
 		boolean it2HasNext = it2.hasNext();
@@ -171,10 +171,6 @@ public class Board implements Iterable<Pair<Player, Position>>, Comparable<Board
 		}
 
 		return 0;
-	}
-
-	private static int offset(Position p) {
-		return offset(p.line) * 8 + offset(p.column);
 	}
 
 	private static int offset(Column c) {
