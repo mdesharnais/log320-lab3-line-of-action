@@ -6,14 +6,14 @@ import java.util.List;
 public class MovementTree implements Iterable<MovementTree> {
 	// Strange, it seems require to use package visibility to let the iterator use these members.
 	final Board board;
-	final Player player;
+	final int player;
 	final Movement movement;
 
-	public MovementTree(Board board, Player player) {
+	public MovementTree(Board board, int player) {
 		this(board, player, null);
 	}
 
-	public MovementTree(Board board, Player player, Movement movement) {
+	public MovementTree(Board board, int player, Movement movement) {
 		this.board = board;
 		this.player = player;
 		this.movement = movement;
@@ -38,7 +38,7 @@ public class MovementTree implements Iterable<MovementTree> {
 				Movement m = this.movements.get(this.index++);
 				return new MovementTree(
 					new Board(MovementTree.this.board, m),
-					Utils.nextPlayer(MovementTree.this.player),
+					~(MovementTree.this.player) & 0x6,
 					m);
 			}
 

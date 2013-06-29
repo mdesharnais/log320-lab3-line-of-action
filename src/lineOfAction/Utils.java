@@ -28,7 +28,7 @@ public class Utils {
 		}
 	}
 
-	public static List<Movement> generateMovements(Board board, Player player) {
+	public static List<Movement> generateMovements(Board board, int player) {
 		// Yes, this function break the encapsulation of Board but, OMG encapsulation is so costly in Java...
 
 		List<Movement> list = new ArrayList<Movement>(64);
@@ -37,14 +37,14 @@ public class Utils {
 
 		// Pre-calculate the movement length for every line/column
 		for (int i = 0; i < 64; ++i) {
-			if (board.data[i] != null) {
+			if (board.data[i] != 0) {
 				horizontalMoveLengthArray[7 - (i >> 3)] += 1;
 				verticalMoveLengthArray[i & 0x7] += 1;
 			}
 		}
 
 		for (int i = 0; i < 64; ++i) {
-			if (board.data[i] != null && board.data[i] == player) {
+			if (board.data[i] != 0 && board.data[i] == player) {
 				int column = i & 0x7;
 				int line = 7 - (i >> 3);
 
@@ -61,22 +61,22 @@ public class Utils {
 					int downLine = line - j;
 
 					// Diagonal upper left
-					if (board.get(leftCol, upLine) != null) {
+					if (board.get(leftCol, upLine) != 0) {
 						diagonalUpperLeftToLowerRightMoveLength += 1;
 					}
 
 					// Diagonal upper right
-					if (board.get(rightCol, upLine) != null) {
+					if (board.get(rightCol, upLine) != 0) {
 						diagonalLowerLeftToUpperRightMoveLength += 1;
 					}
 
 					// Diagonal lower left
-					if (board.get(leftCol, downLine) != null) {
+					if (board.get(leftCol, downLine) != 0) {
 						diagonalLowerLeftToUpperRightMoveLength += 1;
 					}
 
 					// Diagonal lower right
-					if (board.get(rightCol, downLine) != null) {
+					if (board.get(rightCol, downLine) != 0) {
 						diagonalUpperLeftToLowerRightMoveLength += 1;
 					}
 				}
@@ -191,9 +191,9 @@ public class Utils {
 		return list;
 	}
 
-	private static boolean isLegalMove(Board b, Player p, int column, int line, boolean isFinalDst) {
-		Player currentPlayer = b.get(column, line);
-		if (currentPlayer == null) {
+	private static boolean isLegalMove(Board b, int p, int column, int line, boolean isFinalDst) {
+		int currentPlayer = b.get(column, line);
+		if (currentPlayer == 0) {
 			return true;
 		}
 
@@ -214,16 +214,5 @@ public class Utils {
 		}
 
 		return true;
-	}
-
-	public static Player nextPlayer(Player player) {
-		switch (player) {
-		case Black:
-			return Player.White;
-		case White:
-			return Player.Black;
-		default:
-			return null;
-		}
 	}
 }

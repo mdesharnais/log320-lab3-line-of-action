@@ -2,16 +2,17 @@ package lineOfAction;
 
 import java.util.Iterator;
 
-public class Board implements Iterable<Triplet<Player, Integer, Integer>>, Comparable<Board> {
+// Triplet<Player, Column, Line>
+public class Board implements Iterable<Triplet<Integer, Integer, Integer>>, Comparable<Board> {
 	// Strange, it seems require to use package visibility to let the iterator use this member.
 	// If you change the way data is store in this array, Utils.generateMovements will crash.
-	final Player[] data = new Player[64];
+	final int[] data = new int[64];
 
 	public Board(char[] board) {
 		for (int i = 0; i < board.length; ++i) {
 			switch (board[i]) {
 			case '0':
-				this.data[i] = null;
+				// Keep default value of 0.
 				break;
 			case '2':
 				this.data[i] = Player.Black;
@@ -31,12 +32,12 @@ public class Board implements Iterable<Triplet<Player, Integer, Integer>>, Compa
 
 		System.arraycopy(that.data, 0, this.data, 0, 64);
 		this.data[destinationOffset] = this.data[sourceOffset];
-		this.data[sourceOffset] = null;
+		this.data[sourceOffset] = 0;
 	}
 
-	public Player get(int column, int line) {
+	public int get(int column, int line) {
 		if (column < 0 || 7 < column || line < 0 || 7 < line) {
-			return null;
+			return 0;
 		}
 
 		return this.data[((7 - line) << 3) + column];
@@ -47,7 +48,7 @@ public class Board implements Iterable<Triplet<Player, Integer, Integer>>, Compa
 		StringBuilder builder = new StringBuilder();
 
 		for (int i = 0; i < this.data.length; ++i) {
-			if (this.data[i] == null) {
+			if (this.data[i] == 0) {
 				builder.append('.');
 			} else if (this.data[i] == Player.Black) {
 				builder.append('O');
@@ -69,8 +70,8 @@ public class Board implements Iterable<Triplet<Player, Integer, Integer>>, Compa
 	 * Traversal is in the following order A8, B8, C8 ... A7, B7, C7 ... F1, G1, H1
 	 */
 	@Override
-	public Iterator<Triplet<Player, Integer, Integer>> iterator() {
-		return new Iterator<Triplet<Player, Integer, Integer>>() {
+	public Iterator<Triplet<Integer, Integer, Integer>> iterator() {
+		return new Iterator<Triplet<Integer, Integer, Integer>>() {
 			int index = 0;
 
 			@Override
@@ -79,11 +80,11 @@ public class Board implements Iterable<Triplet<Player, Integer, Integer>>, Compa
 			}
 
 			@Override
-			public Triplet<Player, Integer, Integer> next() {
+			public Triplet<Integer, Integer, Integer> next() {
 				int i = this.index;
 				++this.index;
 
-				return new Triplet<Player, Integer, Integer>(
+				return new Triplet<Integer, Integer, Integer>(
 					Board.this.data[i],
 					i & 0x7, // equivalent to i % 8
 					7 - (i >> 3)); // equivalent to 7 - (i / 8)
@@ -98,8 +99,8 @@ public class Board implements Iterable<Triplet<Player, Integer, Integer>>, Compa
 
 	@Override
 	public int compareTo(Board that) {
-		Iterator<Triplet<Player, Integer, Integer>> it1 = iterator();
-		Iterator<Triplet<Player, Integer, Integer>> it2 = that.iterator();
+		Iterator<Triplet<Integer, Integer, Integer>> it1 = iterator();
+		Iterator<Triplet<Integer, Integer, Integer>> it2 = that.iterator();
 
 		boolean it1HasNext = it1.hasNext();
 		boolean it2HasNext = it2.hasNext();
