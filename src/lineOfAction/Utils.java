@@ -1,8 +1,5 @@
 package lineOfAction;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Utils {
 	public static boolean equals(Object x, Object y) {
 		if (x == null && y == null) {
@@ -28,10 +25,11 @@ public class Utils {
 		}
 	}
 
-	public static List<Movement> generateMovements(Board board, int player) {
+	public static Movement[] generateMovements(Board board, int player) {
 		// Yes, this function break the encapsulation of Board but, OMG encapsulation is so costly in Java...
 
-		List<Movement> list = new ArrayList<Movement>(64);
+		Movement[] list = new Movement[144]; // (12 white + 12 black) * 6 directions == 144 possible movements
+		int index = 0;
 		int[] horizontalMoveLengthArray = new int[8];
 		int[] verticalMoveLengthArray = new int[8];
 
@@ -163,47 +161,47 @@ public class Utils {
 				}
 
 				if (horizontalLeft) {
-					list.add(new Movement(column, line,
+					list[index++] = new Movement(column, line,
 						column - horizontalMoveLength,
-						line));
+						line);
 				}
 
 				if (horizontalRight) {
-					list.add(new Movement(column, line,
+					list[index++] = new Movement(column, line,
 						column + horizontalMoveLength,
-						line));
+						line);
 				}
 
 				if (verticalUp) {
-					list.add(new Movement(column, line,
+					list[index++] = new Movement(column, line,
 						column,
-						line + verticalMoveLength));
+						line + verticalMoveLength);
 				}
 
 				if (verticalDown) {
-					list.add(new Movement(column, line,
+					list[index++] = new Movement(column, line,
 						column,
-						line - verticalMoveLength));
+						line - verticalMoveLength);
 				}
 				if (diagonalUpperLeft) {
-					list.add(new Movement(column, line,
+					list[index++] = new Movement(column, line,
 						column - diagonalUpperLeftToLowerRightMoveLength,
-						line + diagonalUpperLeftToLowerRightMoveLength));
+						line + diagonalUpperLeftToLowerRightMoveLength);
 				}
 				if (diagonalUpperRight) {
-					list.add(new Movement(column, line,
+					list[index++] = new Movement(column, line,
 						column + diagonalLowerLeftToUpperRightMoveLength,
-						line + diagonalLowerLeftToUpperRightMoveLength));
+						line + diagonalLowerLeftToUpperRightMoveLength);
 				}
 				if (diagonalLowerLeft) {
-					list.add(new Movement(column, line,
+					list[index++] = new Movement(column, line,
 						column - diagonalLowerLeftToUpperRightMoveLength,
-						line - diagonalLowerLeftToUpperRightMoveLength));
+						line - diagonalLowerLeftToUpperRightMoveLength);
 				}
 				if (diagonalLowerRight) {
-					list.add(new Movement(column, line,
+					list[index++] = new Movement(column, line,
 						column + diagonalUpperLeftToLowerRightMoveLength,
-						line - diagonalUpperLeftToLowerRightMoveLength));
+						line - diagonalUpperLeftToLowerRightMoveLength);
 				}
 			}
 		}

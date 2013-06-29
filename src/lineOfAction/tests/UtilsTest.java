@@ -80,11 +80,10 @@ public class UtilsTest {
 
 		Set<Movement> e2 = new TreeSet<Movement>();
 		for (Movement m : Utils.generateMovements(board, Player.Black)) {
-			e2.add(m);
+			if (m != null) {
+				e2.add(m);
+			}
 		}
-
-		Set<Movement> e3 = new TreeSet<Movement>(e1);
-		e3.removeAll(e2);
 
 		assertEquals(e1.size(), e2.size());
 		assertTrue(e1.containsAll(e2));
@@ -153,7 +152,9 @@ public class UtilsTest {
 
 		Set<Movement> e2 = new TreeSet<Movement>();
 		for (Movement m : Utils.generateMovements(board, Player.White)) {
-			e2.add(m);
+			if (m != null) {
+				e2.add(m);
+			}
 		}
 
 		assertEquals(e1.size(), e2.size());
