@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 public class Board implements Iterable<Triplet<Player, Integer, Integer>>, Comparable<Board> {
 	// Strange, it seems require to use package visibility to let the iterator use this member.
+	// If you change the way data is store in this array, Utils.generateMovements will crash.
 	final Player[] data = new Player[64];
 
 	public Board(char[] board) {
