@@ -25,8 +25,8 @@ public class Board implements Iterable<Triplet<Player, Integer, Integer>>, Compa
 	}
 
 	public Board(Board that, Movement movement) {
-		int sourceOffset = (8 - movement.sourceLine - 1) * 8 + movement.sourceColumn;
-		int destinationOffset = (8 - movement.destinationLine - 1) * 8 + movement.destinationColumn;
+		int sourceOffset = ((7 - movement.sourceLine) << 3) + movement.sourceColumn;
+		int destinationOffset = ((7 - movement.destinationLine) << 3) + movement.destinationColumn;
 
 		System.arraycopy(that.data, 0, this.data, 0, 64);
 		this.data[destinationOffset] = this.data[sourceOffset];
@@ -38,7 +38,7 @@ public class Board implements Iterable<Triplet<Player, Integer, Integer>>, Compa
 			return null;
 		}
 
-		return this.data[(8 - line - 1) * 8 + column];
+		return this.data[((7 - line) << 3) + column];
 	}
 
 	@Override
@@ -85,7 +85,7 @@ public class Board implements Iterable<Triplet<Player, Integer, Integer>>, Compa
 				return new Triplet<Player, Integer, Integer>(
 					Board.this.data[i],
 					i & 0x7, // equivalent to i % 8
-					7 - (i >> 3)); // equivalent to 7 - (i / 8)
+					7 - (i >> 3)); // equivalent to 8 - (i / 8)
 			}
 
 			@Override

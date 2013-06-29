@@ -29,7 +29,7 @@ public class Utils {
 	}
 
 	public static Iterable<Movement> generateMovements(Board board, Player player) {
-		List<Movement> list = new ArrayList<Movement>();
+		List<Movement> list = new ArrayList<Movement>(64);
 
 		for (Triplet<Player, Integer, Integer> tuple : board) {
 			if (tuple.item1 != null && tuple.item1 == player) {
