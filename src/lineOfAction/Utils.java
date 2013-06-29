@@ -28,7 +28,7 @@ public class Utils {
 		}
 	}
 
-	public static Iterable<Movement> generateMovements(Board board, Player player) {
+	public static List<Movement> generateMovements(Board board, Player player) {
 		// Yes, this function break the encapsulation of Board but, OMG encapsulation is so costly in Java...
 
 		List<Movement> list = new ArrayList<Movement>(64);
