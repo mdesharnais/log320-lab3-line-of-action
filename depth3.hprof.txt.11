@@ -1,0 +1,226 @@
+JAVA PROFILE 1.0.1, created Sat Jun 29 19:18:45 2013
+
+Copyright (c) 2003, 2005, Oracle and/or its affiliates. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+  - Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+
+  - Redistributions in binary form must reproduce the above copyright
+    notice, this list of conditions and the following disclaimer in the
+    documentation and/or other materials provided with the distribution.
+
+  - Neither the name of Oracle nor the names of its
+    contributors may be used to endorse or promote products derived
+    from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+Header for -agentlib:hprof (or -Xrunhprof) ASCII Output (JDK 5.0 JVMTI based)
+
+WARNING!  This file format is under development, and is subject to
+change without notice.
+
+This file contains the following types of records:
+
+THREAD START
+THREAD END      mark the lifetime of Java threads
+
+TRACE           represents a Java stack trace.  Each trace consists
+                of a series of stack frames.  Other records refer to
+                TRACEs to identify (1) where object allocations have
+                taken place, (2) the frames in which GC roots were
+                found, and (3) frequently executed methods.
+
+HEAP DUMP       is a complete snapshot of all live objects in the Java
+                heap.  Following distinctions are made:
+
+                ROOT    root set as determined by GC
+                CLS     classes 
+                OBJ     instances
+                ARR     arrays
+
+SITES           is a sorted list of allocation sites.  This identifies
+                the most heavily allocated object types, and the TRACE
+                at which those allocations occurred.
+
+CPU SAMPLES     is a statistical profile of program execution.  The VM
+                periodically samples all running threads, and assigns
+                a quantum to active TRACEs in those threads.  Entries
+                in this record are TRACEs ranked by the percentage of
+                total quanta they consumed; top-ranked TRACEs are
+                typically hot spots in the program.
+
+CPU TIME        is a profile of program execution obtained by measuring
+                the time spent in individual methods (excluding the time
+                spent in callees), as well as by counting the number of
+                times each method is called. Entries in this record are
+                TRACEs ranked by the percentage of total CPU time. The
+                "count" field indicates the number of times each TRACE 
+                is invoked.
+
+MONITOR TIME    is a profile of monitor contention obtained by measuring
+                the time spent by a thread waiting to enter a monitor.
+                Entries in this record are TRACEs ranked by the percentage
+                of total monitor contention time and a brief description
+                of the monitor.  The "count" field indicates the number of 
+                times the monitor was contended at that TRACE.
+
+MONITOR DUMP    is a complete snapshot of all the monitors and threads in 
+                the System.
+
+HEAP DUMP, SITES, CPU SAMPLES|TIME and MONITOR DUMP|TIME records are generated 
+at program exit.  They can also be obtained during program execution by typing 
+Ctrl-\ (on Solaris) or by typing Ctrl-Break (on Win32).
+
+--------
+
+THREAD START (obj=5000016c, id = 200002, name="HPROF gc_finish watcher", group="system")
+THREAD START (obj=5000016c, id = 200001, name="main", group="main")
+THREAD END (id = 200001)
+THREAD START (obj=5000016c, id = 200005, name="DestroyJavaVM", group="main")
+THREAD END (id = 200005)
+THREAD END (id = 200002)
+TRACE 301827:
+	lineOfAction.Utils.generateMovements(Utils.java:Unknown line)
+	lineOfAction.MovementTree$1.<init>(MovementTree.java:Unknown line)
+	lineOfAction.MovementTree.iterator(MovementTree.java:Unknown line)
+	lineOfAction.Main.play(Main.java:Unknown line)
+TRACE 301823:
+	lineOfAction.Board.get(Board.java:Unknown line)
+	lineOfAction.Utils.generateMovements(Utils.java:Unknown line)
+	lineOfAction.MovementTree$1.<init>(MovementTree.java:Unknown line)
+	lineOfAction.MovementTree.iterator(MovementTree.java:Unknown line)
+TRACE 301847:
+	lineOfAction.Main.play(Main.java:Unknown line)
+	lineOfAction.Main.play(Main.java:Unknown line)
+	lineOfAction.Main.play(Main.java:Unknown line)
+	lineOfAction.Main.play(Main.java:Unknown line)
+TRACE 301842:
+	lineOfAction.MovementTree$1.next(MovementTree.java:Unknown line)
+	lineOfAction.MovementTree$1.next(MovementTree.java:Unknown line)
+	lineOfAction.Main.play(Main.java:Unknown line)
+	lineOfAction.Main.play(Main.java:Unknown line)
+TRACE 301834:
+	java.util.ArrayList.get(ArrayList.java:Unknown line)
+	lineOfAction.MovementTree$1.next(MovementTree.java:Unknown line)
+	lineOfAction.MovementTree$1.next(MovementTree.java:Unknown line)
+	lineOfAction.Main.play(Main.java:Unknown line)
+TRACE 301846:
+	lineOfAction.MovementTree$1.next(MovementTree.java:Unknown line)
+	lineOfAction.Main.play(Main.java:Unknown line)
+	lineOfAction.Main.play(Main.java:Unknown line)
+	lineOfAction.Main.play(Main.java:Unknown line)
+TRACE 301826:
+	java.util.ArrayList.add(ArrayList.java:Unknown line)
+	lineOfAction.Utils.generateMovements(Utils.java:Unknown line)
+	lineOfAction.MovementTree$1.<init>(MovementTree.java:Unknown line)
+	lineOfAction.MovementTree.iterator(MovementTree.java:Unknown line)
+TRACE 301835:
+	lineOfAction.Board.<init>(Board.java:Unknown line)
+	lineOfAction.MovementTree$1.next(MovementTree.java:Unknown line)
+	lineOfAction.MovementTree$1.next(MovementTree.java:Unknown line)
+	lineOfAction.Main.play(Main.java:Unknown line)
+TRACE 301845:
+	lineOfAction.MovementTree$1.hasNext(MovementTree.java:Unknown line)
+	lineOfAction.Main.play(Main.java:Unknown line)
+	lineOfAction.Main.play(Main.java:Unknown line)
+	lineOfAction.Main.play(Main.java:Unknown line)
+TRACE 301836:
+	lineOfAction.MovementTree.<init>(MovementTree.java:Unknown line)
+	lineOfAction.MovementTree$1.next(MovementTree.java:Unknown line)
+	lineOfAction.MovementTree$1.next(MovementTree.java:Unknown line)
+	lineOfAction.Main.play(Main.java:Unknown line)
+TRACE 301833:
+	java.util.ArrayList.elementData(ArrayList.java:Unknown line)
+	java.util.ArrayList.get(ArrayList.java:Unknown line)
+	lineOfAction.MovementTree$1.next(MovementTree.java:Unknown line)
+	lineOfAction.MovementTree$1.next(MovementTree.java:Unknown line)
+TRACE 301824:
+	lineOfAction.Movement.<init>(Movement.java:Unknown line)
+	lineOfAction.Utils.generateMovements(Utils.java:Unknown line)
+	lineOfAction.MovementTree$1.<init>(MovementTree.java:Unknown line)
+	lineOfAction.MovementTree.iterator(MovementTree.java:Unknown line)
+TRACE 301832:
+	java.util.ArrayList.rangeCheck(ArrayList.java:Unknown line)
+	java.util.ArrayList.get(ArrayList.java:Unknown line)
+	lineOfAction.MovementTree$1.next(MovementTree.java:Unknown line)
+	lineOfAction.MovementTree$1.next(MovementTree.java:Unknown line)
+TRACE 301825:
+	java.util.ArrayList.ensureCapacityInternal(ArrayList.java:Unknown line)
+	java.util.ArrayList.add(ArrayList.java:Unknown line)
+	lineOfAction.Utils.generateMovements(Utils.java:Unknown line)
+	lineOfAction.MovementTree$1.<init>(MovementTree.java:Unknown line)
+TRACE 301848:
+	lineOfAction.Main.play(Main.java:Unknown line)
+	lineOfAction.Main.play(Main.java:Unknown line)
+	lineOfAction.Main.play(Main.java:Unknown line)
+	lineOfAction.Main.main(Main.java:Unknown line)
+TRACE 301839:
+	lineOfAction.MovementTree$1.<init>(MovementTree.java:Unknown line)
+	lineOfAction.MovementTree.iterator(MovementTree.java:Unknown line)
+	lineOfAction.Main.play(Main.java:Unknown line)
+	lineOfAction.Main.play(Main.java:Unknown line)
+TRACE 301844:
+	lineOfAction.MovementTree.iterator(MovementTree.java:Unknown line)
+	lineOfAction.Main.play(Main.java:Unknown line)
+	lineOfAction.Main.play(Main.java:Unknown line)
+	lineOfAction.Main.play(Main.java:Unknown line)
+TRACE 301822:
+	java.util.ArrayList.<init>(ArrayList.java:Unknown line)
+	lineOfAction.Utils.generateMovements(Utils.java:Unknown line)
+	lineOfAction.MovementTree$1.<init>(MovementTree.java:Unknown line)
+	lineOfAction.MovementTree.iterator(MovementTree.java:Unknown line)
+TRACE 301821:
+	java.util.AbstractList.<init>(AbstractList.java:Unknown line)
+	java.util.ArrayList.<init>(ArrayList.java:Unknown line)
+	lineOfAction.Utils.generateMovements(Utils.java:Unknown line)
+	lineOfAction.MovementTree$1.<init>(MovementTree.java:Unknown line)
+TRACE 301828:
+	java.util.ArrayList.size(ArrayList.java:Unknown line)
+	lineOfAction.MovementTree$1.<init>(MovementTree.java:Unknown line)
+	lineOfAction.MovementTree.iterator(MovementTree.java:Unknown line)
+	lineOfAction.Main.play(Main.java:Unknown line)
+TRACE 301820:
+	java.util.AbstractCollection.<init>(AbstractCollection.java:Unknown line)
+	java.util.AbstractList.<init>(AbstractList.java:Unknown line)
+	java.util.ArrayList.<init>(ArrayList.java:Unknown line)
+	lineOfAction.Utils.generateMovements(Utils.java:Unknown line)
+CPU TIME (ms) BEGIN (total = 126834) Sat Jun 29 19:20:52 2013
+rank   self  accum   count trace method
+   1 33,15% 33,15%   46233 301827 lineOfAction.Utils.generateMovements
+   2 21,13% 54,27% 19573716 301823 lineOfAction.Board.get
+   3  8,92% 63,20% 1608160 301847 lineOfAction.Main.play
+   4  8,72% 71,91% 1609404 301842 lineOfAction.MovementTree$1.next
+   5  6,45% 78,36% 1609440 301834 java.util.ArrayList.get
+   6  4,24% 82,60% 1608160 301846 lineOfAction.MovementTree$1.next
+   7  4,08% 86,69% 1609440 301826 java.util.ArrayList.add
+   8  1,84% 88,53% 1609440 301835 lineOfAction.Board.<init>
+   9  1,79% 90,32% 1654356 301845 lineOfAction.MovementTree$1.hasNext
+  10  1,78% 92,10% 1609440 301836 lineOfAction.MovementTree.<init>
+  11  1,78% 93,88% 1609440 301833 java.util.ArrayList.elementData
+  12  1,77% 95,64% 1609440 301824 lineOfAction.Movement.<init>
+  13  1,73% 97,37% 1609440 301832 java.util.ArrayList.rangeCheck
+  14  1,69% 99,06% 1609440 301825 java.util.ArrayList.ensureCapacityInternal
+  15  0,21% 99,27%    1244 301848 lineOfAction.Main.play
+  16  0,18% 99,45%   46232 301839 lineOfAction.MovementTree$1.<init>
+  17  0,13% 99,58%   46196 301844 lineOfAction.MovementTree.iterator
+  18  0,12% 99,70%   46233 301822 java.util.ArrayList.<init>
+  19  0,11% 99,81%   46233 301821 java.util.AbstractList.<init>
+  20  0,06% 99,87%   46233 301828 java.util.ArrayList.size
+  21  0,06% 99,92%   46233 301820 java.util.AbstractCollection.<init>
+CPU TIME (ms) END

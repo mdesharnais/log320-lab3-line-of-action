@@ -102,43 +102,63 @@ public class Utils {
 					int downLine = line - j;
 
 					if (horizontalLeft && j <= horizontalMoveLength) {
-						horizontalLeft = isLegalMove(board, player, leftCol, line,
-							j == horizontalMoveLength);
+						int p = board.get(leftCol, line);
+						if (p != 0) {
+							horizontalLeft = (p == player) ^ (j == horizontalMoveLength);
+						}
 					}
 
 					if (horizontalRight && j <= horizontalMoveLength) {
-						horizontalRight = isLegalMove(board, player, rightCol, line,
-							j == horizontalMoveLength);
+						int p = board.get(rightCol, line);
+						if (p != 0) {
+							horizontalRight = (p == player) ^ (j == horizontalMoveLength);
+						}
 					}
 
 					if (verticalUp && j <= verticalMoveLength) {
-						verticalUp = isLegalMove(board, player, column, upLine,
-							j == verticalMoveLength);
+						int p = board.get(column, upLine);
+						if (p != 0) {
+							verticalUp = (p == player) ^ (j == verticalMoveLength);
+						}
 					}
 
 					if (verticalDown && j <= verticalMoveLength) {
-						verticalDown = isLegalMove(board, player, column, downLine,
-							j == verticalMoveLength);
+						int p = board.get(column, downLine);
+						if (p != 0) {
+							verticalDown = (p == player) ^ (j == verticalMoveLength);
+						}
 					}
 
 					if (diagonalUpperLeft && j <= diagonalUpperLeftToLowerRightMoveLength) {
-						diagonalUpperLeft = isLegalMove(board, player, leftCol, upLine,
-							j == diagonalUpperLeftToLowerRightMoveLength);
+						int p = board.get(leftCol, upLine);
+						if (p != 0) {
+							diagonalUpperLeft = (p == player)
+								^ (j == diagonalUpperLeftToLowerRightMoveLength);
+						}
 					}
 
 					if (diagonalUpperRight && j <= diagonalLowerLeftToUpperRightMoveLength) {
-						diagonalUpperRight = isLegalMove(board, player, rightCol, upLine,
-							j == diagonalLowerLeftToUpperRightMoveLength);
+						int p = board.get(rightCol, upLine);
+						if (p != 0) {
+							diagonalUpperRight = (p == player)
+								^ (j == diagonalLowerLeftToUpperRightMoveLength);
+						}
 					}
 
 					if (diagonalLowerLeft && j <= diagonalLowerLeftToUpperRightMoveLength) {
-						diagonalLowerLeft = isLegalMove(board, player, leftCol, downLine,
-							j == diagonalLowerLeftToUpperRightMoveLength);
+						int p = board.get(leftCol, downLine);
+						if (p != 0) {
+							diagonalLowerLeft = (p == player)
+								^ (j == diagonalLowerLeftToUpperRightMoveLength);
+						}
 					}
 
 					if (diagonalLowerRight && j <= diagonalUpperLeftToLowerRightMoveLength) {
-						diagonalLowerRight = isLegalMove(board, player, rightCol, downLine,
-							j == diagonalUpperLeftToLowerRightMoveLength);
+						int p = board.get(rightCol, downLine);
+						if (p != 0) {
+							diagonalLowerRight = (p == player)
+								^ (j == diagonalUpperLeftToLowerRightMoveLength);
+						}
 					}
 				}
 
@@ -189,30 +209,5 @@ public class Utils {
 		}
 
 		return list;
-	}
-
-	private static boolean isLegalMove(Board b, int p, int column, int line, boolean isFinalDst) {
-		int currentPlayer = b.get(column, line);
-		if (currentPlayer == 0) {
-			return true;
-		}
-
-		if (isFinalDst) {
-			if (currentPlayer == p) {
-				// We can not capture a friendly checker
-				return false;
-			} else {
-				// We can capture an enemy checker
-			}
-		} else {
-			if (currentPlayer == p) {
-				// We can jump over a friendly checker
-			} else {
-				// We can not jump over an enemy checker
-				return false;
-			}
-		}
-
-		return true;
 	}
 }
