@@ -85,7 +85,7 @@ public class Board implements Iterable<Triplet<Player, Integer, Integer>>, Compa
 				return new Triplet<Player, Integer, Integer>(
 					Board.this.data[i],
 					i & 0x7, // equivalent to i % 8
-					7 - (i >> 3)); // equivalent to 8 - (i / 8)
+					7 - (i >> 3)); // equivalent to 7 - (i / 8)
 			}
 
 			@Override
