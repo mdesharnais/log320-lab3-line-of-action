@@ -19,7 +19,7 @@ import org.junit.Test;
 public class UtilsTest {
 	@Test
 	public void testGenerateMovementsBlack() {
-		Board board = new Board(new char[] {
+		int[] board = Board.makeBoard(new char[] {
 			'0', '2', '2', '2', '2', '2', '2', '0',
 			'4', '0', '0', '0', '0', '0', '0', '4',
 			'4', '0', '0', '0', '0', '0', '0', '4',
@@ -91,7 +91,7 @@ public class UtilsTest {
 
 	@Test
 	public void testGenerateMovementsWhite() {
-		Board board = new Board(new char[] {
+		int[] board = Board.makeBoard(new char[] {
 			'0', '2', '2', '2', '2', '2', '2', '0',
 			'4', '0', '0', '0', '0', '0', '0', '4',
 			'4', '0', '0', '0', '0', '0', '0', '4',

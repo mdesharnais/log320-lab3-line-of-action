@@ -25,7 +25,7 @@ public class Utils {
 		}
 	}
 
-	public static Movement[] generateMovements(Board board, int player) {
+	public static Movement[] generateMovements(int[] board, int player) {
 		// Yes, this function break the encapsulation of Board but, OMG encapsulation is so costly in Java...
 
 		Movement[] list = new Movement[144]; // (12 white + 12 black) * 6 directions == 144 possible movements
@@ -35,14 +35,14 @@ public class Utils {
 
 		// Pre-calculate the movement length for every line/column
 		for (int i = 0; i < 64; ++i) {
-			if (board.data[i] != 0) {
+			if (board[i] != 0) {
 				horizontalMoveLengthArray[7 - (i >> 3)] += 1;
 				verticalMoveLengthArray[i & 0x7] += 1;
 			}
 		}
 
 		for (int i = 0; i < 64; ++i) {
-			if (board.data[i] != 0 && board.data[i] == player) {
+			if (board[i] != 0 && board[i] == player) {
 				int column = i & 0x7;
 				int line = 7 - (i >> 3);
 
@@ -58,24 +58,46 @@ public class Utils {
 					int upLine = line + j;
 					int downLine = line - j;
 
-					// Diagonal upper left
-					if (board.get(leftCol, upLine) != 0) {
-						diagonalUpperLeftToLowerRightMoveLength += 1;
+					boolean leftColOk = leftCol >= 0;
+					boolean rightColOk = rightCol < 8;
+					boolean upLineOk = upLine < 8;
+					boolean downLineOk = downLine >= 0;
+
+					/*
+					 * // Diagonal upper left if (Board.get(board, leftCol, upLine) != 0) {
+					 * diagonalUpperLeftToLowerRightMoveLength += 1; }
+					 * 
+					 * // Diagonal upper right if (Board.get(board, rightCol, upLine) != 0) {
+					 * diagonalLowerLeftToUpperRightMoveLength += 1; }
+					 * 
+					 * // Diagonal lower left if (Board.get(board, leftCol, downLine) != 0) {
+					 * diagonalLowerLeftToUpperRightMoveLength += 1; }
+					 * 
+					 * // Diagonal lower right if (Board.get(board, rightCol, downLine) != 0) {
+					 * diagonalUpperLeftToLowerRightMoveLength += 1; }
+					 */
+					if (upLineOk) {
+						// Diagonal upper left
+						if (leftColOk && board[((7 - upLine) << 3) + leftCol] != 0) {
+							diagonalUpperLeftToLowerRightMoveLength += 1;
+						}
+
+						// Diagonal upper right
+						if (rightColOk && board[((7 - upLine) << 3) + rightCol] != 0) {
+							diagonalLowerLeftToUpperRightMoveLength += 1;
+						}
 					}
 
-					// Diagonal upper right
-					if (board.get(rightCol, upLine) != 0) {
-						diagonalLowerLeftToUpperRightMoveLength += 1;
-					}
+					if (downLineOk) {
+						// Diagonal lower left
+						if (leftColOk && board[((7 - downLine) << 3) + leftCol] != 0) {
+							diagonalLowerLeftToUpperRightMoveLength += 1;
+						}
 
-					// Diagonal lower left
-					if (board.get(leftCol, downLine) != 0) {
-						diagonalLowerLeftToUpperRightMoveLength += 1;
-					}
-
-					// Diagonal lower right
-					if (board.get(rightCol, downLine) != 0) {
-						diagonalUpperLeftToLowerRightMoveLength += 1;
+						// Diagonal lower right
+						if (rightColOk && board[((7 - downLine) << 3) + rightCol] != 0) {
+							diagonalUpperLeftToLowerRightMoveLength += 1;
+						}
 					}
 				}
 
@@ -100,35 +122,35 @@ public class Utils {
 					int downLine = line - j;
 
 					if (horizontalLeft && j <= horizontalMoveLength) {
-						int p = board.get(leftCol, line);
+						int p = board[((7 - line) << 3) + leftCol];
 						if (p != 0) {
 							horizontalLeft = (p == player) ^ (j == horizontalMoveLength);
 						}
 					}
 
 					if (horizontalRight && j <= horizontalMoveLength) {
-						int p = board.get(rightCol, line);
+						int p = board[((7 - line) << 3) + rightCol];
 						if (p != 0) {
 							horizontalRight = (p == player) ^ (j == horizontalMoveLength);
 						}
 					}
 
 					if (verticalUp && j <= verticalMoveLength) {
-						int p = board.get(column, upLine);
+						int p = board[((7 - upLine) << 3) + column];
 						if (p != 0) {
 							verticalUp = (p == player) ^ (j == verticalMoveLength);
 						}
 					}
 
 					if (verticalDown && j <= verticalMoveLength) {
-						int p = board.get(column, downLine);
+						int p = board[((7 - downLine) << 3) + column];
 						if (p != 0) {
 							verticalDown = (p == player) ^ (j == verticalMoveLength);
 						}
 					}
 
 					if (diagonalUpperLeft && j <= diagonalUpperLeftToLowerRightMoveLength) {
-						int p = board.get(leftCol, upLine);
+						int p = Board.get(board, leftCol, upLine);
 						if (p != 0) {
 							diagonalUpperLeft = (p == player)
 								^ (j == diagonalUpperLeftToLowerRightMoveLength);
@@ -136,7 +158,7 @@ public class Utils {
 					}
 
 					if (diagonalUpperRight && j <= diagonalLowerLeftToUpperRightMoveLength) {
-						int p = board.get(rightCol, upLine);
+						int p = board[((7 - upLine) << 3) + rightCol];
 						if (p != 0) {
 							diagonalUpperRight = (p == player)
 								^ (j == diagonalLowerLeftToUpperRightMoveLength);
@@ -144,7 +166,7 @@ public class Utils {
 					}
 
 					if (diagonalLowerLeft && j <= diagonalLowerLeftToUpperRightMoveLength) {
-						int p = board.get(leftCol, downLine);
+						int p = board[((7 - downLine) << 3) + leftCol];
 						if (p != 0) {
 							diagonalLowerLeft = (p == player)
 								^ (j == diagonalLowerLeftToUpperRightMoveLength);
@@ -152,7 +174,7 @@ public class Utils {
 					}
 
 					if (diagonalLowerRight && j <= diagonalUpperLeftToLowerRightMoveLength) {
-						int p = board.get(rightCol, downLine);
+						int p = board[((7 - downLine) << 3) + rightCol];
 						if (p != 0) {
 							diagonalLowerRight = (p == player)
 								^ (j == diagonalUpperLeftToLowerRightMoveLength);
