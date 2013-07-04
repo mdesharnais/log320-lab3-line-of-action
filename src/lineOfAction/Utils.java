@@ -1,6 +1,11 @@
 package lineOfAction;
 
+import java.util.Random;
+
 public class Utils {
+
+	public static final Random Random = new Random(System.currentTimeMillis() / 1000);
+
 	public static boolean equals(Object x, Object y) {
 		if (x == null && y == null) {
 			return true;
@@ -216,5 +221,17 @@ public class Utils {
 		}
 
 		return list;
+	}
+
+	public static int evaluateBoard(int[] board) {
+		return Random.nextInt(10000);
+	}
+
+	public static int evaluateBoard(MovementTree board) {
+		if (board == null) {
+			return Integer.MIN_VALUE;
+		}
+
+		return Utils.evaluateBoard(board.board);
 	}
 }
