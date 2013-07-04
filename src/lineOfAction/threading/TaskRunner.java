@@ -13,13 +13,29 @@ class TaskRunner implements Runnable {
 
 	@Override
 	public void run() {
-		Taskable task;
+		WorkBlock tasks;
 
 		while (this.run) {
-			task = TaskMaster.getNextTask();
+			tasks = TaskMaster.getNextTask();
 
-			if (task != null) {
-				task.doWork();
+			if (tasks != null) {
+
+				for (Thread task : tasks.getTasks()) {
+					task.start();
+				}
+
+				System.out.println("Waiting for threads to finish.");
+
+				for (Thread task : tasks.getTasks()) {
+					try {
+						task.join();
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+
+				System.out.println("Threads finshed.");
+
 				continue;
 			}
 
@@ -30,6 +46,5 @@ class TaskRunner implements Runnable {
 				e.printStackTrace();
 			}
 		}
-
 	}
 }

@@ -11,17 +11,8 @@ public abstract class ThreadMaster {
 
 		started = true;
 
-		int cores = Runtime.getRuntime().availableProcessors();
-		System.out.println("Starting " + cores + " thread(s).");
-
-		startThreads(cores);
-	}
-
-	private static void startThreads(int numberOfThreads) {
-		for (int i = 0; i < numberOfThreads; ++i) {
-			Thread t = new Thread(new TaskRunner());
-			t.start();
-		}
+		Thread t = new Thread(new TaskRunner());
+		t.start();
 	}
 
 }

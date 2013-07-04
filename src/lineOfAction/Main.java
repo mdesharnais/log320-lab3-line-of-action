@@ -5,6 +5,11 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+import lineOfAction.threading.TaskMaster;
+import lineOfAction.threading.TestTask;
+import lineOfAction.threading.ThreadMaster;
+import lineOfAction.threading.WorkBlock;
+
 public class Main {
 
 	private static Socket server;
@@ -14,52 +19,63 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		// TODO Implement the game AI
 
-		int player = 0;
-		server = new Socket("localhost", 8888);
-		input = new BufferedInputStream(server.getInputStream());
-		output = new BufferedOutputStream(server.getOutputStream());
+		WorkBlock wb = new WorkBlock();
 
-		char cmd;
-
-		byte[] boardBuffer = new byte[1024];
-		byte[] moveBuffer = new byte[16];
-
-		MovementTree tree = null;
-
-		while (true) {
-			cmd = (char) input.read();
-
-			if (cmd == '1') {
-				player = Player.White;
-				input.read(boardBuffer, 0, input.available());
-				tree = new MovementTree(Board.makeBoard(new String(boardBuffer).trim().replaceAll(" ", "")
-					.toCharArray()), Player.White);
-				tree = play(tree);
-			} else if (cmd == '2') {
-				player = Player.Black;
-				input.read(boardBuffer, 0, input.available());
-				tree = new MovementTree(Board.makeBoard(new String(boardBuffer).trim().replaceAll(" ", "")
-					.toCharArray()), Player.Black);
-
-			} else if (cmd == '3') {
-				input.read(moveBuffer, 0, input.available());
-				Movement enemyMove = Movement.decode(new String(moveBuffer));
-				System.out.println(enemyMove);
-
-				if (tree != null) {
-					tree = new MovementTree(Board.applyMovement(tree.board, enemyMove), player);
-					tree = play(tree);
-				}
-			} else if (cmd == '4') {
-				System.err.println("Coup invalide. D:");
-				break;
-			}
-
-			if (tree != null) {
-				System.out.println(Board.toString(tree.board));
-			}
-
+		for (int i = 0; i < 7; ++i) {
+			wb.addTask(new TestTask());
 		}
+
+		TaskMaster.addTask(wb);
+
+		ThreadMaster.startThreads();
+
+		//
+		// int player = 0;
+		// server = new Socket("localhost", 8888);
+		// input = new BufferedInputStream(server.getInputStream());
+		// output = new BufferedOutputStream(server.getOutputStream());
+		//
+		// char cmd;
+		//
+		// byte[] boardBuffer = new byte[1024];
+		// byte[] moveBuffer = new byte[16];
+		//
+		// MovementTree tree = null;
+		//
+		// while (true) {
+		// cmd = (char) input.read();
+		//
+		// if (cmd == '1') {
+		// player = Player.White;
+		// input.read(boardBuffer, 0, input.available());
+		// tree = new MovementTree(Board.makeBoard(new String(boardBuffer).trim().replaceAll(" ", "")
+		// .toCharArray()), Player.White);
+		// tree = play(tree);
+		// } else if (cmd == '2') {
+		// player = Player.Black;
+		// input.read(boardBuffer, 0, input.available());
+		// tree = new MovementTree(Board.makeBoard(new String(boardBuffer).trim().replaceAll(" ", "")
+		// .toCharArray()), Player.Black);
+		//
+		// } else if (cmd == '3') {
+		// input.read(moveBuffer, 0, input.available());
+		// Movement enemyMove = Movement.decode(new String(moveBuffer));
+		// System.out.println(enemyMove);
+		//
+		// if (tree != null) {
+		// tree = new MovementTree(Board.applyMovement(tree.board, enemyMove), player);
+		// tree = play(tree);
+		// }
+		// } else if (cmd == '4') {
+		// System.err.println("Coup invalide. D:");
+		// break;
+		// }
+		//
+		// if (tree != null) {
+		// System.out.println(Board.toString(tree.board));
+		// }
+		//
+		// }
 
 	}
 

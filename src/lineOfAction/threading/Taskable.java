@@ -1,7 +1,12 @@
 package lineOfAction.threading;
 
-public interface Taskable {
+public abstract class Taskable implements Runnable {
 
-	public void doWork();
+	public abstract void doWork();
+
+	@Override
+	public void run() {
+		doWork();
+	}
 
 }
