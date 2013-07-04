@@ -160,4 +160,38 @@ public class UtilsTest {
 		assertEquals(e1.size(), e2.size());
 		assertTrue(e1.containsAll(e2));
 	}
+
+	@Test
+	public void testEvaluateBoard1() {
+		int[] board = Board.makeBoard(new char[] {
+			'0', '2', '2', '2', '2', '2', '2', '0',
+			'4', '0', '0', '0', '0', '0', '0', '4',
+			'4', '0', '0', '0', '0', '0', '0', '4',
+			'4', '0', '0', '0', '0', '0', '0', '4',
+			'4', '0', '0', '0', '0', '0', '0', '4',
+			'4', '0', '0', '0', '0', '0', '0', '4',
+			'4', '0', '0', '0', '0', '0', '0', '4',
+			'0', '2', '2', '2', '2', '2', '2', '0'
+		});
+
+		assertEquals(0, Utils.evaluateBoard(board, Player.Black));
+		assertEquals(0, Utils.evaluateBoard(board, Player.White));
+	}
+
+	@Test
+	public void testEvaluateBoard2() {
+		int[] board = Board.makeBoard(new char[] {
+			'0', '0', '2', '2', '2', '2', '2', '0',
+			'4', '0', '0', '0', '0', '0', '0', '4',
+			'4', '0', '0', '2', '0', '0', '0', '4',
+			'4', '0', '0', '0', '0', '0', '0', '4',
+			'4', '0', '0', '0', '0', '0', '0', '4',
+			'4', '0', '0', '0', '0', '0', '0', '4',
+			'4', '0', '0', '0', '0', '0', '0', '4',
+			'0', '2', '2', '2', '2', '2', '2', '0'
+		});
+
+		assertEquals(2, Utils.evaluateBoard(board, Player.Black));
+		assertEquals(-2, Utils.evaluateBoard(board, Player.White));
+	}
 }
