@@ -251,6 +251,25 @@ public class Utils {
 
 		return friendlyValue - ennemyValue;
 	}
+	
+	public static int evaluateBoard(int[] board, int player) {
+		private final int maxScore = 100;
+		private int k = 0;
+	
+		// Go through the board
+		for (int i = 0; i < board.length; i++) 
+		{
+			if (board[i] != 0) 
+			{
+				// If there is a piece and it is the opponenent piece, add one
+				if (board[i] != player)
+					k++;
+			}
+		}
+	
+		// Returning a number between 0 and 100 based on the number of piece on the board for the opponenent
+		return (maxScore - (k*10));
+	}
 
 	public static int evaluateBoard(MovementTree board) {
 		if (board == null) {
