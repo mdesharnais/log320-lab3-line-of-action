@@ -70,4 +70,18 @@ public class Movement implements Comparable<Movement> {
 
 		return result;
 	}
+
+	public static Movement decode(String movement) {
+		int srcColumn, srcLine, dstColumn, dstLine;
+
+		String move = movement.trim().replaceAll(" ", "");
+		String[] moves = move.split("-");
+
+		srcColumn = Column.decode(moves[0].charAt(0));
+		srcLine = Line.decode(moves[0].charAt(1));
+		dstColumn = Column.decode(moves[1].charAt(0));
+		dstLine = Line.decode(moves[1].charAt(1));
+
+		return new Movement(srcColumn, srcLine, dstColumn, dstLine);
+	}
 }
