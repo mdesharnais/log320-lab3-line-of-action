@@ -36,16 +36,14 @@ public class Utils {
 		}
 	}
 
-	public static Movement[] generateMovements(int[] board, int player) {
+	public static int[] generateMovements(int[] board, int player) {
 		// Yes, this function break the encapsulation of Board but, OMG encapsulation is so costly in Java...
-
-		Movement[] list = new Movement[72]; // (12 checkers) * 6 directions == 72 possible movements
+		int[] list = new int[72]; // (12 checkers) * 6 directions == 72 possible movements
 		int index = 0;
 		int[] horizontalMoveLengthArray = new int[8];
 		int[] verticalMoveLengthArray = new int[8];
 		int[] diagonalUpperLeftToLowerRightArray = new int[15];
 		int[] diagonalLowerLeftToUpperRightArray = new int[15];
-
 		// Pre-calculate the movement length for every line/column
 		for (int i = 0; i < 64; ++i) {
 			if (board[i] != 0) {
@@ -150,60 +148,50 @@ public class Utils {
 						}
 					}
 				}
-
 				if (horizontalLeft) {
-					list[index++] = new Movement(column, line,
-						column - horizontalMoveLength,
-						line);
+					list[index++] = (((column & 0xFF) << 24) | ((line & 0xFF) << 16)
+						| ((column - horizontalMoveLength & 0xFF) << 8) | (line & 0xFF));
 				}
-
 				if (horizontalRight) {
-					list[index++] = new Movement(column, line,
-						column + horizontalMoveLength,
-						line);
+					list[index++] = (((column & 0xFF) << 24) | ((line & 0xFF) << 16)
+						| ((column + horizontalMoveLength & 0xFF) << 8) | (line & 0xFF));
 				}
-
 				if (verticalUp) {
-					list[index++] = new Movement(column, line,
-						column,
-						line + verticalMoveLength);
+					list[index++] = (((column & 0xFF) << 24) | ((line & 0xFF) << 16) | ((column & 0xFF) << 8) | (line
+						+ verticalMoveLength & 0xFF));
 				}
-
 				if (verticalDown) {
-					list[index++] = new Movement(column, line,
-						column,
-						line - verticalMoveLength);
+					list[index++] = (((column & 0xFF) << 24) | ((line & 0xFF) << 16) | ((column & 0xFF) << 8) | (line
+						- verticalMoveLength & 0xFF));
 				}
 				if (diagonalUpperLeft) {
-					list[index++] = new Movement(column, line,
-						column - diagonalUpperLeftToLowerRightMoveLength,
-						line + diagonalUpperLeftToLowerRightMoveLength);
+					list[index++] = (((column & 0xFF) << 24) | ((line & 0xFF) << 16)
+						| ((column - diagonalUpperLeftToLowerRightMoveLength & 0xFF) << 8) | (line
+						+ diagonalUpperLeftToLowerRightMoveLength & 0xFF));
 				}
 				if (diagonalUpperRight) {
-					list[index++] = new Movement(column, line,
-						column + diagonalLowerLeftToUpperRightMoveLength,
-						line + diagonalLowerLeftToUpperRightMoveLength);
+					list[index++] = (((column & 0xFF) << 24) | ((line & 0xFF) << 16)
+						| ((column + diagonalLowerLeftToUpperRightMoveLength & 0xFF) << 8) | (line
+						+ diagonalLowerLeftToUpperRightMoveLength & 0xFF));
 				}
 				if (diagonalLowerLeft) {
-					list[index++] = new Movement(column, line,
-						column - diagonalLowerLeftToUpperRightMoveLength,
-						line - diagonalLowerLeftToUpperRightMoveLength);
+					list[index++] = (((column & 0xFF) << 24) | ((line & 0xFF) << 16)
+						| ((column - diagonalLowerLeftToUpperRightMoveLength & 0xFF) << 8) | (line
+						- diagonalLowerLeftToUpperRightMoveLength & 0xFF));
 				}
 				if (diagonalLowerRight) {
-					list[index++] = new Movement(column, line,
-						column + diagonalUpperLeftToLowerRightMoveLength,
-						line - diagonalUpperLeftToLowerRightMoveLength);
+					list[index++] = (((column & 0xFF) << 24) | ((line & 0xFF) << 16)
+						| ((column + diagonalUpperLeftToLowerRightMoveLength & 0xFF) << 8) | (line
+						- diagonalUpperLeftToLowerRightMoveLength & 0xFF));
 				}
 			}
 		}
-
 		return list;
 	}
 
 	public static int evaluateBoard(int[] board, int player) {
 		int friendlyValue = 0;
 		int ennemyValue = 0;
-
 		for (int i = 0; i < board.length; ++i) {
 			if (board[i] != 0) {
 				for (int j = 0; j < points.length; ++j) {

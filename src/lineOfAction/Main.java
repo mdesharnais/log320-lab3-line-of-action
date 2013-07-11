@@ -43,7 +43,7 @@ public class Main {
 
 			} else if (cmd == '3') {
 				input.read(moveBuffer, 0, input.available());
-				Movement enemyMove = Movement.decode(new String(moveBuffer));
+				int enemyMove = Movement.makeMovement(new String(moveBuffer));
 				System.out.println(enemyMove);
 
 				if (tree != null) {
@@ -65,7 +65,7 @@ public class Main {
 
 	private static MovementTree play(MovementTree tree) throws IOException {
 		MovementTree toPlay = ab(tree, null, Integer.MIN_VALUE, null, Integer.MAX_VALUE, 7, true);
-		String move = toPlay.movement.toString();
+		String move = Movement.toString(toPlay.movement);
 		System.out.println(move);
 
 		output.write(move.getBytes(), 0, move.length());
@@ -82,11 +82,11 @@ public class Main {
 		}
 
 		if (maximize) {
-			Movement[] movements = Utils.generateMovements(tree.board, tree.player);
+			int[] movements = Utils.generateMovements(tree.board, tree.player);
 			int index = 0;
 
-			Movement m;
-			while ((m = movements[index++]) != null) {
+			int m;
+			while ((m = movements[index++]) != 0) {
 				MovementTree child = new MovementTree(
 					Board.applyMovement(tree.board, m),
 					~(tree.player) & 0x6,
@@ -108,11 +108,11 @@ public class Main {
 			return alphaTree;
 		}
 
-		Movement[] movements = Utils.generateMovements(tree.board, tree.player);
+		int[] movements = Utils.generateMovements(tree.board, tree.player);
 		int index = 0;
 
-		Movement m;
-		while ((m = movements[index++]) != null) {
+		int m;
+		while ((m = movements[index++]) != 0) {
 			MovementTree child = new MovementTree(
 				Board.applyMovement(tree.board, m),
 				~(tree.player) & 0x6,

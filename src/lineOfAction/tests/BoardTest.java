@@ -126,7 +126,8 @@ public class BoardTest {
 			'0', '2', '2', '2', '2', '2', '2', '0'
 		});
 
-		int[] board2 = Board.applyMovement(board, new Movement(Column.C, Line.Eight, Column.A, Line.Six));
+		int[] board2 = Board.applyMovement(board,
+			Movement.makeMovement(Column.C, Line.Eight, Column.A, Line.Six));
 
 		assertEquals(Board.toString(board2), ". O . O O O O .\n" +
 			"X . . . . . . X\n" +

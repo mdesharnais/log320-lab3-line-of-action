@@ -71,10 +71,10 @@ public class Board {
 		return builder.toString();
 	}
 
-	public static int[] applyMovement(int[] board, Movement movement) {
+	public static int[] applyMovement(int[] board, int movement) {
 		int[] array = new int[64];
-		int sourceOffset = (movement.sourceLine << 3) + movement.sourceColumn;
-		int destinationOffset = (movement.destinationLine << 3) + movement.destinationColumn;
+		int sourceOffset = ((((movement & 0x00FF0000) >> 16) << 3) + ((movement & 0xFF000000) >> 24));
+		int destinationOffset = ((movement & 0x000000FF) << 3) + ((movement & 0x0000FF00) >> 8);
 
 		System.arraycopy(board, 0, array, 0, 64);
 		array[destinationOffset] = array[sourceOffset];
