@@ -82,7 +82,8 @@ public class Main {
 		}
 
 		if (maximize) {
-			for (MovementTree child : tree) {
+			MovementTree child;
+			while ((child = tree.nextChild()) != null) {
 				int betaValue = Utils.evaluateBoard(ab(child, alphaTree, alpha, betaTree, beta, depth - 1,
 					!maximize));
 
@@ -100,7 +101,8 @@ public class Main {
 			return alphaTree;
 		}
 
-		for (MovementTree child : tree) {
+		MovementTree child;
+		while ((child = tree.nextChild()) != null) {
 			int alphaValue = Utils.evaluateBoard(ab(child, alphaTree, alpha, betaTree, beta, depth - 1,
 				!maximize));
 

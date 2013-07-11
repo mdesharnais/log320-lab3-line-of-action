@@ -1,12 +1,12 @@
 package lineOfAction;
 
-import java.util.Iterator;
-
-public class MovementTree implements Iterable<MovementTree> {
+public class MovementTree {
 	// Strange, it seems require to use package visibility to let the iterator use these members.
-	final int[] board;
-	final int player;
-	final Movement movement;
+	public final int[] board;
+	public final int player;
+	public final Movement movement;
+	private Movement[] movements;
+	private int index;
 
 	public MovementTree(int[] board, int player) {
 		this(board, player, null);
@@ -18,32 +18,20 @@ public class MovementTree implements Iterable<MovementTree> {
 		this.movement = movement;
 	}
 
-	@Override
-	public Iterator<MovementTree> iterator() {
-		return new Iterator<MovementTree>() {
-			private final Movement[] movements = Utils.generateMovements(
-				MovementTree.this.board,
-				MovementTree.this.player);
-			private int index = 0;
+	public MovementTree nextChild() {
+		if (this.movements == null) {
+			this.movements = Utils.generateMovements(this.board, this.player);
+		}
 
-			@Override
-			public boolean hasNext() {
-				return this.movements[this.index] != null;
-			}
+		Movement m = this.movements[this.index++];
 
-			@Override
-			public MovementTree next() {
-				Movement m = this.movements[this.index++];
-				return new MovementTree(
-					Board.applyMovement(MovementTree.this.board, m),
-					~(MovementTree.this.player) & 0x6,
-					m);
-			}
+		if (m == null) {
+			return null;
+		}
 
-			@Override
-			public void remove() {
-				throw new UnsupportedOperationException();
-			}
-		};
+		return new MovementTree(
+			Board.applyMovement(MovementTree.this.board, m),
+			~(MovementTree.this.player) & 0x6,
+			m);
 	}
 }
