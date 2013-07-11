@@ -39,16 +39,22 @@ public class Utils {
 	public static Movement[] generateMovements(int[] board, int player) {
 		// Yes, this function break the encapsulation of Board but, OMG encapsulation is so costly in Java...
 
-		Movement[] list = new Movement[144]; // (12 white + 12 black) * 6 directions == 144 possible movements
+		Movement[] list = new Movement[72]; // (12 checkers) * 6 directions == 72 possible movements
 		int index = 0;
 		int[] horizontalMoveLengthArray = new int[8];
 		int[] verticalMoveLengthArray = new int[8];
+		int[] diagonalUpperLeftToLowerRightArray = new int[15];
+		int[] diagonalLowerLeftToUpperRightArray = new int[15];
 
 		// Pre-calculate the movement length for every line/column
 		for (int i = 0; i < 64; ++i) {
 			if (board[i] != 0) {
-				horizontalMoveLengthArray[(i >> 3)] += 1;
-				verticalMoveLengthArray[i & 0x7] += 1;
+				int column = i & 0x7;
+				int line = i >> 3;
+				horizontalMoveLengthArray[line] += 1;
+				verticalMoveLengthArray[column] += 1;
+				diagonalUpperLeftToLowerRightArray[column + line] += 1;
+				diagonalLowerLeftToUpperRightArray[7 + (column - line)] += 1;
 			}
 		}
 
@@ -59,45 +65,10 @@ public class Utils {
 
 				int horizontalMoveLength = horizontalMoveLengthArray[line];
 				int verticalMoveLength = verticalMoveLengthArray[column];
-				int diagonalUpperLeftToLowerRightMoveLength = 1;
-				int diagonalLowerLeftToUpperRightMoveLength = 1;
-
-				// First, we make a pass to count the length of every moves
-				for (int j = 1; j < 8; ++j) {
-					int leftCol = column - j;
-					int rightCol = column + j;
-					int upLine = line + j;
-					int downLine = line - j;
-
-					boolean leftColOk = leftCol >= 0;
-					boolean rightColOk = rightCol < 8;
-					boolean upLineOk = upLine < 8;
-					boolean downLineOk = downLine >= 0;
-
-					if (upLineOk) {
-						// Diagonal upper left
-						if (leftColOk && board[(upLine << 3) + leftCol] != 0) {
-							diagonalUpperLeftToLowerRightMoveLength += 1;
-						}
-
-						// Diagonal upper right
-						if (rightColOk && board[(upLine << 3) + rightCol] != 0) {
-							diagonalLowerLeftToUpperRightMoveLength += 1;
-						}
-					}
-
-					if (downLineOk) {
-						// Diagonal lower left
-						if (leftColOk && board[(downLine << 3) + leftCol] != 0) {
-							diagonalLowerLeftToUpperRightMoveLength += 1;
-						}
-
-						// Diagonal lower right
-						if (rightColOk && board[(downLine << 3) + rightCol] != 0) {
-							diagonalUpperLeftToLowerRightMoveLength += 1;
-						}
-					}
-				}
+				int diagonalUpperLeftToLowerRightMoveLength =
+					diagonalUpperLeftToLowerRightArray[line + column];
+				int diagonalLowerLeftToUpperRightMoveLength =
+					diagonalLowerLeftToUpperRightArray[7 + (column - line)];
 
 				boolean horizontalLeft = (column - horizontalMoveLength) >= 0;
 				boolean horizontalRight = (column + horizontalMoveLength) < 8;
