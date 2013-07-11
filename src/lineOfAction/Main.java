@@ -82,8 +82,15 @@ public class Main {
 		}
 
 		if (maximize) {
-			MovementTree child;
-			while ((child = tree.nextChild()) != null) {
+			Movement[] movements = Utils.generateMovements(tree.board, tree.player);
+			int index = 0;
+
+			Movement m;
+			while ((m = movements[index++]) != null) {
+				MovementTree child = new MovementTree(
+					Board.applyMovement(tree.board, m),
+					~(tree.player) & 0x6,
+					m);
 				int betaValue = Utils.evaluateBoard(ab(child, alphaTree, alpha, betaTree, beta, depth - 1,
 					!maximize));
 
@@ -101,8 +108,15 @@ public class Main {
 			return alphaTree;
 		}
 
-		MovementTree child;
-		while ((child = tree.nextChild()) != null) {
+		Movement[] movements = Utils.generateMovements(tree.board, tree.player);
+		int index = 0;
+
+		Movement m;
+		while ((m = movements[index++]) != null) {
+			MovementTree child = new MovementTree(
+				Board.applyMovement(tree.board, m),
+				~(tree.player) & 0x6,
+				m);
 			int alphaValue = Utils.evaluateBoard(ab(child, alphaTree, alpha, betaTree, beta, depth - 1,
 				!maximize));
 
