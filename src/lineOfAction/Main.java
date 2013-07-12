@@ -24,7 +24,7 @@ public class Main {
 		byte[] boardBuffer = new byte[1024];
 		byte[] moveBuffer = new byte[16];
 
-		MovementTree tree = null;
+		int[] board = null;
 
 		while (true) {
 			cmd = (char) input.read();
@@ -32,107 +32,130 @@ public class Main {
 			if (cmd == '1') {
 				player = Player.White;
 				input.read(boardBuffer, 0, input.available());
-				tree = new MovementTree(Board.makeBoard(new String(boardBuffer).trim().replaceAll(" ", "")
-					.toCharArray()), Player.White);
-				tree = play(tree);
+				board = Board.makeBoard(new String(boardBuffer).trim().replaceAll(" ", "").toCharArray());
+				board = Board.applyMovement(board, play(board, player));
 			} else if (cmd == '2') {
 				player = Player.Black;
 				input.read(boardBuffer, 0, input.available());
-				tree = new MovementTree(Board.makeBoard(new String(boardBuffer).trim().replaceAll(" ", "")
-					.toCharArray()), Player.Black);
-
+				board = Board.makeBoard(new String(boardBuffer).trim().replaceAll(" ", "").toCharArray());
+				board = Board.applyMovement(board, play(board, player));
 			} else if (cmd == '3') {
 				input.read(moveBuffer, 0, input.available());
 				int enemyMove = Movement.makeMovement(new String(moveBuffer));
 				System.out.println(enemyMove);
 
-				if (tree != null) {
-					tree = new MovementTree(Board.applyMovement(tree.board, enemyMove), player);
-					tree = play(tree);
+				if (board != null) {
+					board = Board.applyMovement(board, enemyMove);
+					board = Board.applyMovement(board, play(board, player));
 				}
 			} else if (cmd == '4') {
 				System.err.println("Coup invalide. D:");
 				break;
 			}
 
-			if (tree != null) {
-				System.out.println(Board.toString(tree.board));
+			if (board != null) {
+				System.out.println(Board.toString(board));
 			}
 
 		}
 
 	}
 
-	private static MovementTree play(MovementTree tree) throws IOException {
-		MovementTree toPlay = ab(tree, null, Integer.MIN_VALUE, null, Integer.MAX_VALUE, 7, true);
-		String move = Movement.toString(toPlay.movement);
+	private static int play(int[] board, int player) throws IOException {
+		long bestAlpha = Integer.MIN_VALUE;
+
+		int[] movements = Utils.generateMovements(board, player);
+		int index = 0;
+		int childPlayer = ~(player) & 0x6;
+		int childMovement;
+		while ((childMovement = movements[index++]) != 0) {
+			int[] childBoard = Board.applyMovement(board, childMovement);
+			bestAlpha = Math.max(bestAlpha,
+				ab(childBoard, // Board
+					childPlayer, // Player
+					(bestAlpha & 0xFFFFFFFF00000000l) & childMovement, // Alpha
+					Integer.MAX_VALUE, // Beta
+					7, // Depth
+					false)); // optimize
+		}
+		int movement = (int) (bestAlpha & 0x00000000FFFFFFFF);
+		String move = Movement.toString(movement);
 		System.out.println(move);
 
 		output.write(move.getBytes(), 0, move.length());
 		output.flush();
-
-		return new MovementTree(Board.applyMovement(tree.board, toPlay.movement), tree.player);
+		return movement;
 	}
 
-	private static MovementTree ab(MovementTree tree, MovementTree alphaTree, int alpha,
-		MovementTree betaTree, int beta, int depth,
-		boolean maximize) {
+	// alpha & beta use the following encoding:
+	// 
+	// 64       56       48       40       32       24       16       8        0
+	// +--------+--------+--------+--------+--------+--------+--------+--------+
+	// | Alpha or beta value               | srcCol | srcLin | dstCol | dstLin |
+	// +--------+--------+--------+--------+--------+--------+--------+--------+
+	// 
+	// Since the alpha/beta value are the most significant bits, we cans still compare them and the position
+	// will not have any effect on the result.
+	public static long ab(int[] board, int player, long alpha, long beta, int depth, boolean maximize) {
 		if (depth <= 0) {
-			return tree;
+			return ((maximize ? alpha : beta) & 0xFFFFFFFF00000000l)
+				& (Utils.evaluateBoard(board, player) & 0x00000000FFFFFFFF);
 		}
 
 		if (maximize) {
-			int[] movements = Utils.generateMovements(tree.board, tree.player);
+			int[] movements = Utils.generateMovements(board, player);
 			int index = 0;
 
 			int m;
 			while ((m = movements[index++]) != 0) {
-				MovementTree child = new MovementTree(
-					Board.applyMovement(tree.board, m),
-					~(tree.player) & 0x6,
-					m);
-				int betaValue = Utils.evaluateBoard(ab(child, alphaTree, alpha, betaTree, beta, depth - 1,
-					!maximize));
+				int[] childBoard = Board.applyMovement(board, m);
+				int childPlayer = ~(player) & 0x6;
+				long childAlpha = ab(childBoard, childPlayer, alpha, beta, depth - 1, !maximize);
 
-				if (betaValue > alpha) {
-					alphaTree = child;
+				// max(alpha, childAlpha)
+				if (childAlpha > alpha) {
+					alpha = childAlpha;
 				}
-
-				alpha = Math.max(alpha, betaValue);
 
 				if (beta <= alpha) {
 					break;
 				}
 			}
 
-			return alphaTree;
+			// If there was not any children
+			if (index == 1) {
+				alpha = (alpha & 0xFFFFFFFF00000000l)
+					& (Utils.evaluateBoard(board, player) & 0x00000000FFFFFFFF);
+			}
+
+			return alpha;
 		}
 
-		int[] movements = Utils.generateMovements(tree.board, tree.player);
+		int[] movements = Utils.generateMovements(board, player);
 		int index = 0;
 
 		int m;
 		while ((m = movements[index++]) != 0) {
-			MovementTree child = new MovementTree(
-				Board.applyMovement(tree.board, m),
-				~(tree.player) & 0x6,
-				m);
-			int alphaValue = Utils.evaluateBoard(ab(child, alphaTree, alpha, betaTree, beta, depth - 1,
-				!maximize));
+			int[] childBoard = Board.applyMovement(board, m);
+			int childPlayer = ~(player) & 0x6;
+			long tempBeta = ab(childBoard, childPlayer, alpha, beta, depth - 1, !maximize);
 
-			if (beta >= alphaValue) {
-				betaTree = child;
+			// min(beta, childBeta)
+			if (tempBeta < beta) {
+				beta = tempBeta;
 			}
-
-			beta = Math.min(beta, alphaValue);
 
 			if (beta <= alpha) {
 				break;
 			}
 		}
 
-		return betaTree;
+		// If there was not any children
+		if (index == 1) {
+			beta = (beta & 0xFFFFFFFF00000000l)
+				& (Utils.evaluateBoard(board, player) & 0x00000000FFFFFFFF);
+		}
 
+		return beta;
 	}
-
 }

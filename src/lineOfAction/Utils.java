@@ -210,12 +210,4 @@ public class Utils {
 
 		return friendlyValue - ennemyValue;
 	}
-
-	public static int evaluateBoard(MovementTree board) {
-		if (board == null) {
-			return Integer.MIN_VALUE;
-		}
-
-		return Utils.evaluateBoard(board.board, board.player);
-	}
 }
