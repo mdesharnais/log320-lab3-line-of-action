@@ -68,6 +68,10 @@ public class Main {
 		int index = 0;
 		int childPlayer = ~(player) & 0x6;
 		int childMovement;
+
+		// This is the first level of the alpha/beta pruning.
+		// We can lauch them in separate thread and take adventage of multiple core without
+		// spawning billions of thread because of the recursive ab() function.
 		while ((childMovement = movements[index++]) != 0) {
 			int[] childBoard = Board.applyMovement(board, childMovement);
 			bestAlpha = Math.max(bestAlpha,
