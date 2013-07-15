@@ -9,6 +9,7 @@ import java.util.TreeSet;
 import lineOfAction.Board;
 import lineOfAction.Column;
 import lineOfAction.Line;
+import lineOfAction.Main;
 import lineOfAction.Movement;
 import lineOfAction.Player;
 import lineOfAction.Utils;
@@ -193,5 +194,29 @@ public class UtilsTest {
 
 		assertEquals(2, Utils.evaluateBoard(board, Player.Black));
 		assertEquals(-2, Utils.evaluateBoard(board, Player.White));
+	}
+
+	@Test
+	public void testAlphaBeta1() {
+		int[] board = Board.makeBoard(new char[] {
+			'0', '0', '0', '0', '0', '0', '0', '0',
+			'0', '0', '0', '0', '0', '0', '0', '0',
+			'0', '4', '0', '2', '0', '0', '0', '0',
+			'0', '0', '0', '0', '0', '0', '0', '0',
+			'0', '0', '0', '0', '0', '0', '0', '0',
+			'0', '4', '0', '2', '0', '0', '0', '0',
+			'0', '0', '0', '0', '0', '0', '0', '0',
+			'0', '0', '0', '0', '0', '0', '0', '0'
+		});
+
+		long alpha = Main.ab(board,
+			Player.Black,
+			Long.MIN_VALUE & 0xFFFFFFFF00000000l,
+			Long.MAX_VALUE & 0xFFFFFFFF00000000l,
+			1,
+			true);
+		int movement = Movement.makeMovement(Column.D, Line.Three, Column.D, Line.Five);
+		assertEquals(movement,
+			alpha & 0xFFFFFFFFl);
 	}
 }

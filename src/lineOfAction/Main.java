@@ -102,11 +102,20 @@ public class Main {
 	// will not have any effect on the result.
 	public static long ab(int[] board, int player, long alpha, long beta, int depth, boolean maximize) {
 		if (depth <= 0) {
-			return ((maximize ? alpha : beta) & 0xFFFFFFFF00000000l)
-				& (Utils.evaluateBoard(board, player) & 0x00000000FFFFFFFF);
+			long boardValue = (maximize ? 1 : -1) * Utils.evaluateBoard(board, player);
+			// We set the int32 return by Utils.evaluateBoard()
+			// as the 32 most significant bits of the alpha return value.
+			// We keep the parent movement as the 32 least significant bits.
+			return (boardValue << 32)
+				| ((maximize ? alpha : beta) & 0x00000000FFFFFFFFl);
+			// I can't even believe all this is necessary:
+			//   - Utils.evaluateBoard() return an int32 and we need to explicitly cast it to int64
+			//   - Even if alpha and beta are int64, we need to use explicitly specify the hexadecimal mask as int64 with "l" suffix
+			// Is all this shit require because java refuse to have proper unsigned int?!?
 		}
 
 		if (maximize) {
+			boolean firstRecursion = (alpha & 0x00000000FFFFFFFFl) == 0;
 			int[] movements = Utils.generateMovements(board, player);
 			int index = 0;
 
@@ -114,7 +123,20 @@ public class Main {
 			while ((m = movements[index++]) != 0) {
 				int[] childBoard = Board.applyMovement(board, m);
 				int childPlayer = ~(player) & 0x6;
-				long childAlpha = ab(childBoard, childPlayer, alpha, beta, depth - 1, !maximize);
+				long childAlpha;
+
+				// If the parent movement is empty, we are at the first recursion step
+				if (firstRecursion) {
+					// Since we are at the first recursion step, we have to insert the child movement
+					childAlpha = ab(childBoard,
+						childPlayer,
+						(alpha & 0xFFFFFFFF00000000l) | (m & 0x00000000FFFFFFFF),
+						(beta & 0xFFFFFFFF00000000l) | (m & 0x00000000FFFFFFFF),
+						depth - 1, !maximize);
+				} else {
+					// Since we are not at the first recursion step, we keep the parent movement
+					childAlpha = ab(childBoard, childPlayer, alpha, beta, depth - 1, !maximize);
+				}
 
 				// max(alpha, childAlpha)
 				if (childAlpha > alpha) {
@@ -128,13 +150,17 @@ public class Main {
 
 			// If there was not any children
 			if (index == 1) {
-				alpha = (alpha & 0xFFFFFFFF00000000l)
-					& (Utils.evaluateBoard(board, player) & 0x00000000FFFFFFFF);
+				long boardValue = (maximize ? 1 : -1) * Utils.evaluateBoard(board, player);
+				// We set the int32 return by Utils.evaluateBoard()
+				// as the 32 most significant bits of the alpha return value.
+				// We keep the parent movement as the 32 least significant bits.
+				alpha = (boardValue << 32) | (alpha & 0x00000000FFFFFFFFl);
 			}
 
 			return alpha;
 		}
 
+		boolean firstRecursion = (beta & 0x00000000FFFFFFFFl) == 0;
 		int[] movements = Utils.generateMovements(board, player);
 		int index = 0;
 
@@ -142,7 +168,20 @@ public class Main {
 		while ((m = movements[index++]) != 0) {
 			int[] childBoard = Board.applyMovement(board, m);
 			int childPlayer = ~(player) & 0x6;
-			long tempBeta = ab(childBoard, childPlayer, alpha, beta, depth - 1, !maximize);
+			long tempBeta;
+
+			// If the parent movement is empty, we are at the first recursion step
+			if (firstRecursion) {
+				// Since we are at the first recursion step, we have to insert the child movement
+				tempBeta = ab(childBoard,
+					childPlayer,
+					(alpha & 0xFFFFFFFF00000000l) | (m & 0x00000000FFFFFFFF),
+					(beta & 0xFFFFFFFF00000000l) | (m & 0x00000000FFFFFFFF),
+					depth - 1, !maximize);
+			} else {
+				// Since we are not at the first recursion step, we keep the parent movement
+				tempBeta = ab(childBoard, childPlayer, alpha, beta, depth - 1, !maximize);
+			}
 
 			// min(beta, childBeta)
 			if (tempBeta < beta) {
@@ -156,8 +195,11 @@ public class Main {
 
 		// If there was not any children
 		if (index == 1) {
-			beta = (beta & 0xFFFFFFFF00000000l)
-				& (Utils.evaluateBoard(board, player) & 0x00000000FFFFFFFF);
+			long boardValue = (maximize ? 1 : -1) * Utils.evaluateBoard(board, player);
+			// We set the int32 return by Utils.evaluateBoard()
+			// as the 32 most significant bits of the alpha return value.
+			// We keep the parent movement as the 32 least significant bits.
+			beta = (boardValue << 32) | (beta & 0x00000000FFFFFFFFl);
 		}
 
 		return beta;
