@@ -5,8 +5,9 @@ import java.util.Collections;
 import java.util.List;
 
 public class Board {
-	public static int[] makeBoard(char[] board) {
-		int[] array = new int[64];
+	public static long[] makeBoard(char[] board) {
+		long whites = 0;
+		long blacks = 0;
 
 		for (int i = 0; i < 64; ++i) {
 			int column = i & 0x7;
@@ -17,17 +18,17 @@ public class Board {
 				// Keep default value of 0.
 				break;
 			case '2':
-				array[(line << 3) + column] = Player.Black;
+				blacks |= (0x1l << ((line << 3) + column));
 				break;
 			case '4':
-				array[(line << 3) + column] = Player.White;
+				whites |= (0x1l << ((line << 3) + column));
 				break;
 			default:
 				throw new IllegalArgumentException("");
 			}
 		}
 
-		return array;
+		return new long[] { blacks, whites };
 	}
 
 	public static int get(int[] board, int column, int line) {
@@ -38,18 +39,18 @@ public class Board {
 		return board[(line << 3) + column];
 	}
 
-	public static String toString(int[] board) {
+	public static String toString(long blacks, long whites) {
 		StringBuilder builder = new StringBuilder();
 
 		List<String> list = new ArrayList<String>();
 
 		for (int i = 0; i < 64; ++i) {
-			if (board[i] == 0) {
-				builder.append('.');
-			} else if (board[i] == Player.Black) {
+			if ((blacks & (0x1l << i)) != 0) {
 				builder.append('O');
-			} else if (board[i] == Player.White) {
+			} else if ((whites & (0x1l << i)) != 0) {
 				builder.append('X');
+			} else {
+				builder.append('.');
 			}
 
 			if (i != 0 && i % 8 == 7) {
@@ -71,14 +72,20 @@ public class Board {
 		return builder.toString();
 	}
 
-	public static int[] applyMovement(int[] board, int movement) {
-		int[] array = new int[64];
-		int sourceOffset = ((((movement & 0x00FF0000) >> 16) << 3) + ((movement & 0xFF000000) >> 24));
-		int destinationOffset = ((movement & 0x000000FF) << 3) + ((movement & 0x0000FF00) >> 8);
+	public static long[] applyMovement(long friends, long enemies, int movement) {
+		int sourceOffset = (((movement & 0x00FF0000) >> 13) + ((movement & 0xFF000000) >> 24));
+		int destinationOffset = ((movement & 0x000000FF) << 3)
+			+ ((movement & 0x0000FF00) >> 8);
 
-		System.arraycopy(board, 0, array, 0, 64);
-		array[destinationOffset] = array[sourceOffset];
-		array[sourceOffset] = 0;
-		return array;
+		// Clear our source position in our board
+		friends &= ~(0x1l << sourceOffset);
+
+		// Clear our destination position in enemies board
+		enemies &= ~(0x1l << destinationOffset);
+
+		// Set our destination position in our board
+		friends |= (0x1l << destinationOffset);
+
+		return new long[] { friends, enemies };
 	}
 }

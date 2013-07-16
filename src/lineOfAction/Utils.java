@@ -1,6 +1,5 @@
 package lineOfAction;
 
-import java.util.Arrays;
 
 public class Utils {
 
@@ -36,28 +35,39 @@ public class Utils {
 		}
 	}
 
-	public static int[] generateMovements(int[] board, int player) {
-		// Yes, this function break the encapsulation of Board but, OMG encapsulation is so costly in Java...
-		int[] list = new int[72]; // (12 checkers) * 6 directions == 72 possible movements
+	public static int[] generateMovements(long friends, long enemies) {
+		int[] list = new int[72]; // 12 checkers * 6 directions == 72 possible movements
 		int index = 0;
 		int[] horizontalMoveLengthArray = new int[8];
 		int[] verticalMoveLengthArray = new int[8];
 		int[] diagonalUpperLeftToLowerRightArray = new int[15];
 		int[] diagonalLowerLeftToUpperRightArray = new int[15];
+
 		// Pre-calculate the movement length for every line/column
 		for (int i = 0; i < 64; ++i) {
-			if (board[i] != 0) {
+			long offset = 0x1l << i;
+			int n = 0;
+
+			if ((friends & offset) != 0) {
+				++n;
+			}
+
+			if ((enemies & offset) != 0) {
+				++n;
+			}
+
+			if (n != 0) {
 				int column = i & 0x7;
 				int line = i >> 3;
-				horizontalMoveLengthArray[line] += 1;
-				verticalMoveLengthArray[column] += 1;
-				diagonalUpperLeftToLowerRightArray[column + line] += 1;
-				diagonalLowerLeftToUpperRightArray[7 + (column - line)] += 1;
+				horizontalMoveLengthArray[line] += n;
+				verticalMoveLengthArray[column] += n;
+				diagonalUpperLeftToLowerRightArray[column + line] += n;
+				diagonalLowerLeftToUpperRightArray[7 + (column - line)] += n;
 			}
 		}
 
 		for (int i = 0; i < 64; ++i) {
-			if (board[i] != 0 && board[i] == player) {
+			if ((friends & (0x1l << i)) != 0) {
 				int column = i & 0x7;
 				int line = (i >> 3);
 
@@ -82,72 +92,87 @@ public class Utils {
 					&& (line - diagonalUpperLeftToLowerRightMoveLength) >= 0;
 
 				// Second, we make a pass to generate the moves
-				for (int j = 1; j < 8; ++j) {
+				// We loop while there is one direction that could potentially be a movement
+				for (int j = 1; j < 8
+					&& (horizontalLeft
+						|| horizontalRight
+						|| verticalUp
+						|| verticalDown
+						|| diagonalUpperLeft
+						|| diagonalUpperRight
+						|| diagonalLowerLeft
+						|| diagonalLowerRight); ++j) {
+
 					int leftCol = column - j;
 					int rightCol = column + j;
 					int upLine = line + j;
 					int downLine = line - j;
 
-					if (horizontalLeft && j <= horizontalMoveLength) {
-						int p = board[(line << 3) + leftCol];
-						if (p != 0) {
-							horizontalLeft = (p == player) ^ (j == horizontalMoveLength);
+					if (horizontalLeft) {
+						if (j < horizontalMoveLength) {
+							horizontalLeft = (enemies & (0x1l << ((line << 3) + leftCol))) == 0;
+						} else if (j == horizontalMoveLength) {
+							horizontalLeft = (friends & (0x1l << ((line << 3) + leftCol))) == 0;
 						}
 					}
 
-					if (horizontalRight && j <= horizontalMoveLength) {
-						int p = board[(line << 3) + rightCol];
-						if (p != 0) {
-							horizontalRight = (p == player) ^ (j == horizontalMoveLength);
+					if (horizontalRight) {
+						if (j < horizontalMoveLength) {
+							horizontalRight = (enemies & (0x1l << ((line << 3) + rightCol))) == 0;
+						} else if (j == horizontalMoveLength) {
+							horizontalRight = (friends & (0x1l << ((line << 3) + rightCol))) == 0;
 						}
 					}
 
-					if (verticalUp && j <= verticalMoveLength) {
-						int p = board[(upLine << 3) + column];
-						if (p != 0) {
-							verticalUp = (p == player) ^ (j == verticalMoveLength);
+					if (verticalUp) {
+						if (j < verticalMoveLength) {
+							verticalUp = (enemies & (0x1l << ((upLine << 3) + column))) == 0;
+						} else if (j == verticalMoveLength) {
+							verticalUp = (friends & (0x1l << ((upLine << 3) + column))) == 0;
 						}
 					}
 
-					if (verticalDown && j <= verticalMoveLength) {
-						int p = board[(downLine << 3) + column];
-						if (p != 0) {
-							verticalDown = (p == player) ^ (j == verticalMoveLength);
+					if (verticalDown) {
+						if (j < verticalMoveLength) {
+							verticalDown = (enemies & (0x1l << ((downLine << 3) + column))) == 0;
+						} else if (j == verticalMoveLength) {
+							verticalDown = (friends & (0x1l << ((downLine << 3) + column))) == 0;
 						}
 					}
 
-					if (diagonalUpperLeft && j <= diagonalUpperLeftToLowerRightMoveLength) {
-						int p = board[(upLine << 3) + leftCol];
-						if (p != 0) {
-							diagonalUpperLeft = (p == player)
-								^ (j == diagonalUpperLeftToLowerRightMoveLength);
+					if (diagonalUpperLeft) {
+						if (j < diagonalUpperLeftToLowerRightMoveLength) {
+							diagonalUpperLeft = (enemies & (0x1l << ((upLine << 3) + leftCol))) == 0;
+						} else if (j == diagonalUpperLeftToLowerRightMoveLength) {
+							diagonalUpperLeft = (friends & (0x1l << ((upLine << 3) + leftCol))) == 0;
 						}
 					}
 
-					if (diagonalUpperRight && j <= diagonalLowerLeftToUpperRightMoveLength) {
-						int p = board[(upLine << 3) + rightCol];
-						if (p != 0) {
-							diagonalUpperRight = (p == player)
-								^ (j == diagonalLowerLeftToUpperRightMoveLength);
+					if (diagonalUpperRight) {
+						if (j < diagonalLowerLeftToUpperRightMoveLength) {
+							diagonalUpperRight = (enemies & (0x1l << ((upLine << 3) + rightCol))) == 0;
+						} else if (j == diagonalLowerLeftToUpperRightMoveLength) {
+							diagonalUpperRight = (friends & (0x1l << ((upLine << 3) + rightCol))) == 0;
 						}
 					}
 
-					if (diagonalLowerLeft && j <= diagonalLowerLeftToUpperRightMoveLength) {
-						int p = board[(downLine << 3) + leftCol];
-						if (p != 0) {
-							diagonalLowerLeft = (p == player)
-								^ (j == diagonalLowerLeftToUpperRightMoveLength);
+					if (diagonalLowerLeft) {
+						if (j < diagonalLowerLeftToUpperRightMoveLength) {
+							diagonalLowerLeft = (enemies & (0x1l << ((downLine << 3) + leftCol))) == 0;
+						} else if (j == diagonalLowerLeftToUpperRightMoveLength) {
+							diagonalLowerLeft = (friends & (0x1l << ((downLine << 3) + leftCol))) == 0;
 						}
 					}
 
 					if (diagonalLowerRight && j <= diagonalUpperLeftToLowerRightMoveLength) {
-						int p = board[(downLine << 3) + rightCol];
-						if (p != 0) {
-							diagonalLowerRight = (p == player)
-								^ (j == diagonalUpperLeftToLowerRightMoveLength);
+						if (j < diagonalUpperLeftToLowerRightMoveLength) {
+							diagonalLowerRight = (enemies & (0x1l << ((downLine << 3) + rightCol))) == 0;
+						} else if (j == diagonalUpperLeftToLowerRightMoveLength) {
+							diagonalLowerRight = (friends & (0x1l << ((downLine << 3) + rightCol))) == 0;
 						}
 					}
 				}
+
 				if (horizontalLeft) {
 					list[index++] = (((column & 0xFF) << 24) | ((line & 0xFF) << 16)
 						| ((column - horizontalMoveLength & 0xFF) << 8) | (line & 0xFF));
@@ -189,6 +214,11 @@ public class Utils {
 		return list;
 	}
 
+	public static int evaluateBoard(long friends, long enemies) {
+		return 0;
+	}
+
+	/*
 	public static int evaluateBoard(int[] board, int player) {
 		int friendlyValue = 0;
 		int ennemyValue = 0;
@@ -210,4 +240,5 @@ public class Utils {
 
 		return friendlyValue - ennemyValue;
 	}
+	*/
 }

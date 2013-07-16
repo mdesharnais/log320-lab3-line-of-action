@@ -5,12 +5,12 @@ import lineOfAction.Board;
 import lineOfAction.Column;
 import lineOfAction.Line;
 import lineOfAction.Movement;
-import lineOfAction.Player;
 
 import org.junit.Test;
 
 @SuppressWarnings("static-method")
 public class BoardTest {
+	/*
 	@Test
 	public void testGet() {
 		int[] board = Board.makeBoard(new char[] {
@@ -89,10 +89,11 @@ public class BoardTest {
 		assertEquals(Board.get(board, Column.G, Line.Eight), Player.Black);
 		assertEquals(Board.get(board, Column.H, Line.Eight), 0);
 	}
+	*/
 
 	@Test
 	public void testToString() {
-		int[] board = Board.makeBoard(new char[] {
+		long[] boards = Board.makeBoard(new char[] {
 			'0', '2', '2', '2', '2', '2', '2', '0',
 			'4', '0', '0', '0', '0', '0', '0', '4',
 			'4', '0', '0', '0', '0', '0', '0', '4',
@@ -103,7 +104,7 @@ public class BoardTest {
 			'0', '2', '2', '2', '2', '2', '2', '0'
 		});
 
-		assertEquals(Board.toString(board), ". O O O O O O .\n" +
+		assertEquals(Board.toString(boards[0], boards[1]), ". O O O O O O .\n" +
 			"X . . . . . . X\n" +
 			"X . . . . . . X\n" +
 			"X . . . . . . X\n" +
@@ -115,7 +116,7 @@ public class BoardTest {
 
 	@Test
 	public void testConstructor() {
-		int[] board = Board.makeBoard(new char[] {
+		long[] boards = Board.makeBoard(new char[] {
 			'0', '2', '2', '2', '2', '2', '2', '0',
 			'4', '0', '0', '0', '0', '0', '0', '4',
 			'4', '0', '0', '0', '0', '0', '0', '4',
@@ -126,10 +127,10 @@ public class BoardTest {
 			'0', '2', '2', '2', '2', '2', '2', '0'
 		});
 
-		int[] board2 = Board.applyMovement(board,
+		long[] board2 = Board.applyMovement(boards[0], boards[1],
 			Movement.makeMovement(Column.C, Line.Eight, Column.A, Line.Six));
 
-		assertEquals(Board.toString(board2), ". O . O O O O .\n" +
+		assertEquals(Board.toString(board2[0], board2[1]), ". O . O O O O .\n" +
 			"X . . . . . . X\n" +
 			"O . . . . . . X\n" +
 			"X . . . . . . X\n" +
