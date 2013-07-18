@@ -1,14 +1,19 @@
 package lineOfAction;
 
+import java.util.Arrays;
 
 public class Utils {
 
 	// My eyes are bleeding, this is global state!!!
 	public static final int[][] points = {
-		{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 15, 16, 23, 24, 31, 32, 39, 40, 48, 55, 56, 57, 58, 59, 60, 61, 62, 63 },
-		{ 9, 10, 11, 12, 13, 14, 17, 22, 25, 30, 33, 38, 41, 46, 49, 50, 51, 52, 53, 54 },
-		{ 26, 27, 28, 29, 34, 37, 42, 43, 44, 45 },
-		{ 27, 28, 35, 36 }
+		{0,0,0,0,0,0,0,0},
+		{0,1,1,1,1,1,1,0},
+		{0,1,2,2,2,2,1,0},
+		{0,1,2,3,3,2,1,0},
+        {0,1,2,3,3,2,1,0},
+        {0,1,2,2,2,2,1,0},
+        {0,1,1,1,1,1,1,0},
+        {0,0,0,0,0,0,0,0}
 	};
 
 	public static boolean equals(Object x, Object y) {
@@ -215,17 +220,36 @@ public class Utils {
 	}
 
 	public static int evaluateBoard(long friends, long enemies) {
-		return 0;
+        int friendlyValue = 0;
+        int ennemyValue = 0;
+
+        for (int i = 0; i < 64; ++i) {
+            long offset = 0x1l << i;
+            int column = -1;
+            int line = -1;
+
+            if ((friends & offset) != 0) { // Permet de savoir s'il y a un pion ami à l'offset i
+                column = i & 0x7; // Ici on obtient la colonne correspondant à l'offset i
+                line = i >> 3; // Ici on obtient la ligne correspondante à l'offset i
+                friendlyValue += points[line][column];
+            }
+
+            if ((enemies & offset) != 0) { // Permet de savoir s'il y a un pion ennemi à l'offset i
+                column = i & 0x7; // Ici on obtient la colonne correspondant à l'offset i
+                line = i >> 3; // Ici on obtient la ligne correspondante à l'offset i
+                ennemyValue += points[line][column];
+            }
+        }
+
+        return friendlyValue;
 	}
 
-	/*
 	public static int evaluateBoard(int[] board, int player) {
 		int friendlyValue = 0;
 		int ennemyValue = 0;
 		for (int i = 0; i < board.length; ++i) {
 			if (board[i] != 0) {
 				for (int j = 0; j < points.length; ++j) {
-					// Hargh, this is using global state!!!
 					if (Arrays.binarySearch(points[j], i) >= 0) {
 						if (board[i] == player) {
 							friendlyValue += j;
@@ -240,5 +264,5 @@ public class Utils {
 
 		return friendlyValue - ennemyValue;
 	}
-	*/
+
 }
