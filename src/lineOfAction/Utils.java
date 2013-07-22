@@ -6,15 +6,14 @@ public class Utils {
 
 	// My eyes are bleeding, this is global state!!!
 	public static final int[][] points = {
-		{0,0,0,0,0,0,0,0},
-		{0,1,1,1,1,1,1,0},
-		{0,1,2,2,2,2,1,0},
-		{0,1,2,3,3,2,1,0},
-        {0,1,2,3,3,2,1,0},
-        {0,1,2,2,2,2,1,0},
-        {0,1,1,1,1,1,1,0},
-        {0,0,0,0,0,0,0,0}
-	};
+		{ 0, 0, 0, 0, 0, 0, 0, 0 },
+		{ 0, 1, 1, 1, 1, 1, 1, 0 },
+		{ 0, 1, 2, 2, 2, 2, 1, 0 },
+		{ 0, 1, 2, 3, 3, 2, 1, 0 },
+		{ 0, 1, 2, 3, 3, 2, 1, 0 },
+		{ 0, 1, 2, 2, 2, 2, 1, 0 },
+		{ 0, 1, 1, 1, 1, 1, 1, 0 },
+		{ 0, 0, 0, 0, 0, 0, 0, 0 } };
 
 	public static boolean equals(Object x, Object y) {
 		if (x == null && y == null) {
@@ -41,7 +40,7 @@ public class Utils {
 	}
 
 	public static int[] generateMovements(long friends, long enemies) {
-		int[] list = new int[72]; // 12 checkers * 6 directions == 72 possible movements
+		int[] list = new int[96]; // 12 checkers * 8 directions == 72 possible movements
 		int index = 0;
 		int[] horizontalMoveLengthArray = new int[8];
 		int[] verticalMoveLengthArray = new int[8];
@@ -78,10 +77,9 @@ public class Utils {
 
 				int horizontalMoveLength = horizontalMoveLengthArray[line];
 				int verticalMoveLength = verticalMoveLengthArray[column];
-				int diagonalUpperLeftToLowerRightMoveLength =
-					diagonalUpperLeftToLowerRightArray[line + column];
-				int diagonalLowerLeftToUpperRightMoveLength =
-					diagonalLowerLeftToUpperRightArray[7 + (column - line)];
+				int diagonalUpperLeftToLowerRightMoveLength = diagonalUpperLeftToLowerRightArray[line
+					+ column];
+				int diagonalLowerLeftToUpperRightMoveLength = diagonalLowerLeftToUpperRightArray[7 + (column - line)];
 
 				boolean horizontalLeft = (column - horizontalMoveLength) >= 0;
 				boolean horizontalRight = (column + horizontalMoveLength) < 8;
@@ -220,28 +218,33 @@ public class Utils {
 	}
 
 	public static int evaluateBoard(long friends, long enemies) {
-        int friendlyValue = 0;
-        int ennemyValue = 0;
+		int friendlyValue = 0;
+		int ennemyValue = 0;
+		int centralisationValue = 0;
+		int quadValue = 0;
 
-        for (int i = 0; i < 64; ++i) {
-            long offset = 0x1l << i;
-            int column = -1;
-            int line = -1;
+		for (int i = 0; i < 64; ++i) {
+			long offset = 0x1l << i;
+			int column = -1;
+			int line = -1;
 
-            if ((friends & offset) != 0) { // Permet de savoir s'il y a un pion ami à l'offset i
-                column = i & 0x7; // Ici on obtient la colonne correspondant à l'offset i
-                line = i >> 3; // Ici on obtient la ligne correspondante à l'offset i
-                friendlyValue += points[line][column];
-            }
+			if ((friends & offset) != 0) { // Permet de savoir s'il y a un pion ami à l'offset i
+				column = i & 0x7; // Ici on obtient la colonne correspondant à l'offset i
+				line = i >> 3; // Ici on obtient la ligne correspondante à l'offset i
+				friendlyValue += points[line][column];
+			}
 
-            if ((enemies & offset) != 0) { // Permet de savoir s'il y a un pion ennemi à l'offset i
-                column = i & 0x7; // Ici on obtient la colonne correspondant à l'offset i
-                line = i >> 3; // Ici on obtient la ligne correspondante à l'offset i
-                ennemyValue += points[line][column];
-            }
-        }
+			if ((enemies & offset) != 0) { // Permet de savoir s'il y a un pion ennemi à l'offset i
+				column = i & 0x7; // Ici on obtient la colonne correspondant à l'offset i
+				line = i >> 3; // Ici on obtient la ligne correspondante à l'offset i
+				ennemyValue += points[line][column];
+			}
+		}
 
-        return friendlyValue;
+		//centralisationValue = friendlyValue - ennemyValue;
+
+		return friendlyValue - ennemyValue;
+
 	}
 
 	public static int evaluateBoard(int[] board, int player) {

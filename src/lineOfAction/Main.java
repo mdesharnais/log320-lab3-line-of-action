@@ -26,38 +26,59 @@ public class Main {
 		long friends = 0;
 		long enemies = 0;
 
+		/*
+		int temp;
+		while ((temp = input.read()) != -1) {
+			System.out.print((char) temp);
+		}
+		 */
+
 		while (true) {
 			cmd = (char) input.read();
 
-			if (cmd == '1') {
+			if (cmd == '1' || cmd == '2') {
 				input.read(boardBuffer, 0, input.available());
+				long begin = System.nanoTime();
 				long[] boards = Board.makeBoard(new String(boardBuffer).trim().replaceAll(" ", "")
 					.toCharArray());
-				friends = boards[1]; // Whites
-				enemies = boards[0]; // Blacks
-				boards = Board.applyMovement(friends, enemies, play(friends, enemies));
-				friends = boards[0]; // First argument
-				enemies = boards[1]; // Second argument
-			} else if (cmd == '2') {
-				input.read(boardBuffer, 0, input.available());
-				long[] boards = Board.makeBoard(new String(boardBuffer).trim().replaceAll(" ", "")
-					.toCharArray());
-				friends = boards[0]; // Blacks
-				enemies = boards[1]; // Whites
-				boards = Board.applyMovement(friends, enemies, play(friends, enemies));
-				friends = boards[0]; // First argument
-				enemies = boards[1]; // Second argument
+
+				//System.out.printf("boards[0]: %x boards[1]: %x\n", boards[0], boards[1]);
+				//System.out.printf("command: %c\n", cmd);
+				//System.out.printf("friends: %x enemies: %x\n", friends, enemies);
+
+				switch (cmd) {
+				case '1': // White
+					friends = boards[1];
+					enemies = boards[0];
+					int ourMovement = play(friends, enemies);
+					long end = System.nanoTime();
+					System.out.printf("Calculation time: %d ms\n", (end - begin) / 1000000);
+					System.out.printf("Our movement: %s\n", Movement.toString(ourMovement));
+					boards = Board.applyMovement(friends, enemies, ourMovement);
+					friends = boards[0];
+					enemies = boards[1];
+					break;
+				case '2': // Black
+					friends = boards[0];
+					enemies = boards[1];
+					break;
+				}
 			} else if (cmd == '3') {
 				input.read(moveBuffer, 0, input.available());
+				long begin = System.nanoTime();
 				int enemyMove = Movement.makeMovement(new String(moveBuffer));
-				System.out.println(enemyMove);
+				System.out.printf("Enemy movement: %s\n", Movement.toString(enemyMove));
 
 				long[] boards = Board.applyMovement(enemies, friends, enemyMove);
-				friends = boards[1]; // Second argument
-				enemies = boards[0]; // First argument
-				boards = Board.applyMovement(friends, enemies, play(friends, enemies));
-				friends = boards[0]; // First argument
-				enemies = boards[1]; // Second argument
+				friends = boards[1];
+				enemies = boards[0];
+				int ourMovement = play(friends, enemies);
+				System.out.printf("Our movement: %s\n", Movement.toString(ourMovement));
+				long end = System.nanoTime();
+				System.out.printf("Calculation time: %d ms\n", (end - begin) / 1000000);
+				boards = Board.applyMovement(friends, enemies, ourMovement);
+				friends = boards[0];
+				enemies = boards[1];
 			} else if (cmd == '4') {
 				System.err.println("Coup invalide. D:");
 				break;
@@ -67,6 +88,7 @@ public class Main {
 	}
 
 	private static int play(long friends, long enemies) throws IOException {
+		/*
 		long bestAlpha = Integer.MIN_VALUE;
 
 		int[] movements = Utils.generateMovements(friends, enemies);
@@ -78,17 +100,16 @@ public class Main {
 		// spawning billions of thread because of the recursive ab() function.
 		while ((childMovement = movements[index++]) != 0) {
 			long[] childBoards = Board.applyMovement(friends, enemies, childMovement);
-			bestAlpha = Math.max(bestAlpha,
-				ab(childBoards[1], // friends
-					childBoards[0], // enemies
-					(bestAlpha & 0xFFFFFFFF00000000l) & childMovement, // Alpha
-					Integer.MAX_VALUE, // Beta
-					7, // Depth
-					false)); // optimize
-		}
-		int movement = (int) (bestAlpha & 0x00000000FFFFFFFF);
+			bestAlpha = Math.max(bestAlpha, ab(childBoards[1], // friends
+				childBoards[0], // enemies
+				(bestAlpha & 0xFFFFFFFF00000000l) & childMovement, // Alpha
+				Long.MAX_VALUE, // Beta
+				5, // Depth
+				false)); // optimize
+		}*/
+		long bestAlpha = Main.ab(friends, enemies, Long.MIN_VALUE, Long.MAX_VALUE, 6, true);
+		int movement = (int) (bestAlpha & 0x00000000FFFFFFFFl);
 		String move = Movement.toString(movement);
-		System.out.println(move);
 
 		output.write(move.getBytes(), 0, move.length());
 		output.flush();
@@ -96,12 +117,12 @@ public class Main {
 	}
 
 	// alpha & beta use the following encoding:
-	// 
+	//
 	// 64       56       48       40       32       24       16       8        0
 	// +--------+--------+--------+--------+--------+--------+--------+--------+
 	// | Alpha or beta value               | srcCol | srcLin | dstCol | dstLin |
 	// +--------+--------+--------+--------+--------+--------+--------+--------+
-	// 
+	//
 	// Since the alpha/beta value are the most significant bits, we cans still compare them and the position
 	// will not have any effect on the result.
 	public static long ab(long friends, long enemies, long alpha, long beta, int depth, boolean maximize) {
@@ -110,8 +131,7 @@ public class Main {
 			// We set the int32 return by Utils.evaluateBoard()
 			// as the 32 most significant bits of the alpha return value.
 			// We keep the parent movement as the 32 least significant bits.
-			return (boardValue << 32)
-				| ((maximize ? alpha : beta) & 0x00000000FFFFFFFFl);
+			return (boardValue << 32) | ((maximize ? alpha : beta) & 0x00000000FFFFFFFFl);
 			// I can't even believe all this is necessary:
 			//   - Utils.evaluateBoard() return an int32 and we need to explicitly cast it to int64
 			//   - Even if alpha and beta are int64, we need to use explicitly specify the hexadecimal mask as int64 with "l" suffix
@@ -146,10 +166,8 @@ public class Main {
 				// If the parent movement is empty, we are at the first recursion step
 				if (firstRecursion) {
 					// Since we are at the first recursion step, we have to insert the child movement
-					childAlpha = ab(childFriends,
-						childEnemies,
-						(alpha & 0xFFFFFFFF00000000l) | (m & 0x00000000FFFFFFFF),
-						(beta & 0xFFFFFFFF00000000l) | (m & 0x00000000FFFFFFFF),
+					childAlpha = ab(childFriends, childEnemies, (alpha & 0xFFFFFFFF00000000l)
+						| (m & 0x00000000FFFFFFFF), (beta & 0xFFFFFFFF00000000l) | (m & 0x00000000FFFFFFFF),
 						depth - 1, !maximize);
 				} else {
 					// Since we are not at the first recursion step, we keep the parent movement
@@ -204,10 +222,8 @@ public class Main {
 			// If the parent movement is empty, we are at the first recursion step
 			if (firstRecursion) {
 				// Since we are at the first recursion step, we have to insert the child movement
-				childBeta = ab(childFriends,
-					childEnemies,
-					(alpha & 0xFFFFFFFF00000000l) | (m & 0x00000000FFFFFFFF),
-					(beta & 0xFFFFFFFF00000000l) | (m & 0x00000000FFFFFFFF),
+				childBeta = ab(childFriends, childEnemies, (alpha & 0xFFFFFFFF00000000l)
+					| (m & 0x00000000FFFFFFFF), (beta & 0xFFFFFFFF00000000l) | (m & 0x00000000FFFFFFFF),
 					depth - 1, !maximize);
 			} else {
 				// Since we are not at the first recursion step, we keep the parent movement
