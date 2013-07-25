@@ -254,7 +254,9 @@ public class Utils {
 				offset = line * 8 + j;
 
 				if (j >= 0) {
-					bLeft = (board & (0x1l << offset)) != 0;
+					if (line >= 0) {
+						bLeft = (board & (0x1l << offset)) != 0;
+					}
 
 					if (line < 7) {
 						tLeft = (board & (0x1l << offset + 8)) != 0;
@@ -262,7 +264,9 @@ public class Utils {
 				}
 
 				if (j < 7) {
-					bRight = (board & (0x1l << offset + 1)) != 0;
+					if (line >= 0) {
+						bRight = (board & (0x1l << offset + 1)) != 0;
+					}
 
 					if (line < 7) {
 						tRight = (board & (0x1l << offset + 9)) != 0;
@@ -276,53 +280,50 @@ public class Utils {
 
 				//Check only one
 				if (bLeft && !bRight && !tLeft && !tRight) {
-					eulerValue += 4;
+					eulerValue += 25;
 					System.out.println(">>>>>>>>>Single");
 					++singles;
-				}
-				if (!bLeft && bRight && !tLeft && !tRight) {
-					eulerValue += 4;
+				} else if (!bLeft && bRight && !tLeft && !tRight) {
+					eulerValue += 25;
 					System.out.println(">>>>>>>>>Single");
 					++singles;
-				}
-				if (!bLeft && !bRight && tLeft && !tRight) {
-					eulerValue += 4;
+				} else if (!bLeft && !bRight && tLeft && !tRight) {
+					eulerValue += 25;
 					System.out.println(">>>>>>>>>Single");
 					++singles;
-				}
-				if (!bLeft && !bRight && !tLeft && tRight) {
-					eulerValue += 4;
+				} else if (!bLeft && !bRight && !tLeft && tRight) {
+					eulerValue += 25;
 					System.out.println(">>>>>>>>>Single");
 					++singles;
 				}
 
 				//Check triple
 				if (!bLeft && bRight && tLeft && tRight) {
-					eulerValue += -4;
+					eulerValue += -25;
 					System.out.println(">>>>>>>>>Triple");
 					++triples;
 				} else if (bLeft && !bRight && tLeft && tRight) {
-					eulerValue += -4;
+					eulerValue += -25;
 					System.out.println(">>>>>>>>>Triple");
 					++triples;
 				} else if (bLeft && bRight && !tLeft && tRight) {
-					eulerValue += -4;
+					eulerValue += -25;
 					System.out.println(">>>>>>>>>Triple");
 					++triples;
 				} else if (bLeft && bRight && tLeft && !tRight) {
-					eulerValue += -4;
+					eulerValue += -25;
 					System.out.println(">>>>>>>>>Triple");
 					++triples;
 				}
 
 				//Check diagonal
 				if (tLeft && bRight && !tRight && !bLeft) {
-					eulerValue += -2;
+					eulerValue += -50;
 					System.out.println("Diagonal");
 					++diags;
 				}
 				if (!tLeft && !bRight && tRight && bLeft) {
-					eulerValue += -2;
+					eulerValue += -50;
 					System.out.println("Diagonal");
 					++diags;
 				}
@@ -336,7 +337,7 @@ public class Utils {
 		System.out.printf("n=%d\n", n);
 		System.out.printf("singles:%d triples:%d diagonals:%d\n\n", singles, triples, diags);
 
-		return eulerValue;
+		return (eulerValue / 100);
 	}
 
 	public static final int[] pointss = {
