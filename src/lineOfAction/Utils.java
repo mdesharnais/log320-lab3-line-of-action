@@ -216,21 +216,25 @@ public class Utils {
 	}
 
 	public static int evaluateBoard(long friends, long enemies) {
-		int value = 0;
+		int friendCentralize = 0;
+		int enemyCentralize = 0;
+
+		int friendQuad = -Utils.checkQuads(friends);
+		int enemyQuad = -Utils.checkQuads(enemies);
 
 		for (int i = 0; i < 64; ++i) {
 			long offset = 0x1l << i;
 
 			if ((friends & offset) != 0) {
-				value += pointss[i];
+				friendCentralize += pointss[i];
 			}
 
 			if ((enemies & offset) != 0) {
-				value -= pointss[i];
+				enemyCentralize -= pointss[i];
 			}
 		}
 
-		return value;
+		return friendCentralize + enemyCentralize + friendQuad + enemyQuad;
 
 	}
 
@@ -238,11 +242,8 @@ public class Utils {
 		int line = -1; //*8 + col
 		long offset;
 		boolean tLeft, tRight, bLeft, bRight;
-		int n = 0;
 
 		int eulerValue = 0;
-
-		int singles = 0, triples = 0, diags = 0;
 
 		while (line < 8) {
 			for (int j = -1; j < 8; ++j) {
@@ -273,69 +274,39 @@ public class Utils {
 					}
 				}
 
-				++n;
-				System.out.printf("line: %d\n", line);
-				System.out.printf("%b %b\n", tLeft, tRight);
-				System.out.printf("%b %b\n", bLeft, bRight);
-
 				//Check only one
 				if (bLeft && !bRight && !tLeft && !tRight) {
 					eulerValue += 25;
-					System.out.println(">>>>>>>>>Single");
-					++singles;
 				} else if (!bLeft && bRight && !tLeft && !tRight) {
 					eulerValue += 25;
-					System.out.println(">>>>>>>>>Single");
-					++singles;
 				} else if (!bLeft && !bRight && tLeft && !tRight) {
 					eulerValue += 25;
-					System.out.println(">>>>>>>>>Single");
-					++singles;
 				} else if (!bLeft && !bRight && !tLeft && tRight) {
 					eulerValue += 25;
-					System.out.println(">>>>>>>>>Single");
-					++singles;
 				}
 
 				//Check triple
 				if (!bLeft && bRight && tLeft && tRight) {
 					eulerValue += -25;
-					System.out.println(">>>>>>>>>Triple");
-					++triples;
 				} else if (bLeft && !bRight && tLeft && tRight) {
 					eulerValue += -25;
-					System.out.println(">>>>>>>>>Triple");
-					++triples;
 				} else if (bLeft && bRight && !tLeft && tRight) {
 					eulerValue += -25;
-					System.out.println(">>>>>>>>>Triple");
-					++triples;
 				} else if (bLeft && bRight && tLeft && !tRight) {
 					eulerValue += -25;
-					System.out.println(">>>>>>>>>Triple");
-					++triples;
 				}
 
 				//Check diagonal
 				if (tLeft && bRight && !tRight && !bLeft) {
 					eulerValue += -50;
-					System.out.println("Diagonal");
-					++diags;
 				}
 				if (!tLeft && !bRight && tRight && bLeft) {
 					eulerValue += -50;
-					System.out.println("Diagonal");
-					++diags;
 				}
-
-				System.out.println();
 			}
 
 			++line;
 		}
-
-		System.out.printf("n=%d\n", n);
-		System.out.printf("singles:%d triples:%d diagonals:%d\n\n", singles, triples, diags);
 
 		return (eulerValue / 100);
 	}

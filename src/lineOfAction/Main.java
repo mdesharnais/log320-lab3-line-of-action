@@ -156,10 +156,11 @@ public class Main {
 	// will not have any effect on the result.
 	public static long ab(long friends, long enemies, long alpha, long beta, int depth, boolean maximize) {
 		/*System.out.printf("%s Alpha: %x Beta: %x\n%s", repeat('-', depth), alpha, beta, Board.toString(
-			friends, enemies));
+		    friends, enemies));
 		*/
 		if (depth <= 0) {
 			long boardValue = (maximize ? 1 : -1) * Utils.evaluateBoard(friends, enemies);
+
 			// We set the int32 return by Utils.evaluateBoard()
 			// as the 32 most significant bits of the alpha return value.
 			// We keep the parent movement as the 32 least significant bits.
@@ -299,11 +300,11 @@ public class Main {
 					}
 				}
 
-				int srcOffset = ((column & 0xFF) << 11) + ((line & 0xFF) >> 8);
+				int srcOffset = (line << 3) + column;
 
 				if (horizontalLeft) {
 					++movementCount;
-					int dstOffset = (((column - horizontalMoveLength) & 0xFF) << 11) + ((line & 0xFF) >> 8);
+					int dstOffset = (column - horizontalMoveLength) + (line << 3);
 
 					// Our friends is our child enemies
 					long childFriends = enemies;
@@ -336,7 +337,7 @@ public class Main {
 				}
 				if (horizontalRight) {
 					++movementCount;
-					int dstOffset = (((column + horizontalMoveLength) & 0xFF) << 11) + ((line & 0xFF) >> 8);
+					int dstOffset = (column + horizontalMoveLength) + (line << 3);
 
 					// Our friends is our child enemies
 					long childFriends = enemies;
@@ -369,7 +370,7 @@ public class Main {
 				}
 				if (verticalUp) {
 					++movementCount;
-					int dstOffset = ((column & 0xFF) << 11) + (((line + verticalMoveLength) & 0xFF) >> 8);
+					int dstOffset = column + ((line + verticalMoveLength) << 3);
 
 					// Our friends is our child enemies
 					long childFriends = enemies;
@@ -402,7 +403,7 @@ public class Main {
 				}
 				if (verticalDown) {
 					++movementCount;
-					int dstOffset = ((column & 0xFF) << 11) + (((line - verticalMoveLength) & 0xFF) >> 8);
+					int dstOffset = column + ((line - verticalMoveLength) << 3);
 
 					// Our friends is our child enemies
 					long childFriends = enemies;
@@ -435,8 +436,8 @@ public class Main {
 				}
 				if (diagonalUpperLeft) {
 					++movementCount;
-					int dstOffset = (((column - diagonalUpperLeftToLowerRightMoveLength) & 0xFF) << 11)
-						+ (((line + diagonalUpperLeftToLowerRightMoveLength) & 0xFF) >> 8);
+					int dstOffset = (column - diagonalUpperLeftToLowerRightMoveLength)
+						+ ((line + diagonalUpperLeftToLowerRightMoveLength) << 3);
 
 					// Our friends is our child enemies
 					long childFriends = enemies;
@@ -469,8 +470,8 @@ public class Main {
 				}
 				if (diagonalUpperRight) {
 					++movementCount;
-					int dstOffset = (((column + diagonalLowerLeftToUpperRightMoveLength) & 0xFF) << 11)
-						+ (((line + diagonalLowerLeftToUpperRightMoveLength) & 0xFF) >> 8);
+					int dstOffset = (column + diagonalLowerLeftToUpperRightMoveLength)
+						+ ((line + diagonalLowerLeftToUpperRightMoveLength) << 3);
 
 					// Our friends is our child enemies
 					long childFriends = enemies;
@@ -503,8 +504,8 @@ public class Main {
 				}
 				if (diagonalLowerLeft) {
 					++movementCount;
-					int dstOffset = (((column - diagonalLowerLeftToUpperRightMoveLength) & 0xFF) << 11)
-						+ (((line - diagonalLowerLeftToUpperRightMoveLength) & 0xFF) >> 8);
+					int dstOffset = (column - diagonalLowerLeftToUpperRightMoveLength)
+						+ ((line - diagonalLowerLeftToUpperRightMoveLength) << 3);
 
 					// Our friends is our child enemies
 					long childFriends = enemies;
@@ -537,8 +538,8 @@ public class Main {
 				}
 				if (diagonalLowerRight) {
 					++movementCount;
-					int dstOffset = (((column + diagonalUpperLeftToLowerRightMoveLength) & 0xFF) << 11)
-						+ (((line - diagonalUpperLeftToLowerRightMoveLength) & 0xFF) >> 8);
+					int dstOffset = (column + diagonalUpperLeftToLowerRightMoveLength)
+						+ ((line - diagonalUpperLeftToLowerRightMoveLength) << 3);
 
 					// Our friends is our child enemies
 					long childFriends = enemies;
@@ -584,4 +585,5 @@ public class Main {
 
 		return maximize ? alpha : beta;
 	}
+
 }
