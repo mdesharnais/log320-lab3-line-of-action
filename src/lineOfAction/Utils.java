@@ -73,7 +73,7 @@ public class Utils {
 		long alpha = Long.MIN_VALUE;
 		long beta = Long.MAX_VALUE;
 
-		int[] movements = generateMovements2(friends, enemies);
+		int[] movements = generateMovements(friends, enemies);
 		long value = Long.MIN_VALUE;
 
 		int m = 0;
@@ -147,7 +147,7 @@ public class Utils {
 	public static long alphaValue(long friends, long enemies, long alpha, long beta, int depth, int movement) {
 		int[] movements = null;
 
-		if (depth == 0 || (movements = generateMovements2(friends, enemies)) == null) {
+		if (depth == 0 || (movements = generateMovements(friends, enemies)) == null) {
 			long boardValue = Utils.evaluateBoard(friends, enemies);
 			return ((boardValue << 32) & 0xFFFFFFFF00000000l) | (movement & 0x00000000FFFFFFFFl);
 		}
@@ -188,7 +188,7 @@ public class Utils {
 	public static long betaValue(long friends, long enemies, long alpha, long beta, int depth, int movement) {
 		int[] movements = null;
 
-		if (depth == 0 || (movements = generateMovements2(friends, enemies)) == null) {
+		if (depth == 0 || (movements = generateMovements(friends, enemies)) == null) {
 			long boardValue = Utils.evaluateBoard(friends, enemies);
 			return ((boardValue << 32) & 0xFFFFFFFF00000000l) | (movement & 0x00000000FFFFFFFFl);
 		}
@@ -679,20 +679,6 @@ public class Utils {
 		0, 1, 1, 1, 1, 1, 1, 0,
 		0, 0, 0, 0, 0, 0, 0, 0
 	};
-
-	public static int[] generateMovements2(long friends, long enemies) {
-		int[] movements = generateMovements(friends, enemies);
-		int index = 0;
-		while (movements[index++] != 0) {
-			// noop
-		}
-
-		if (index == 1) {
-			return null;
-		}
-
-		return movements;
-	}
 
 	/*
 		public static int evaluateBoard(long friends, long enemies) {
