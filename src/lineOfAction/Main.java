@@ -22,8 +22,6 @@ public class Main {
 	public static ExecutorService s_executor = Executors.newFixedThreadPool(4);
 
 	public static void main(String[] args) throws Exception {
-		doStuff();
-
 		if (args.length != 3) {
 			System.err.println("Args mismatch: host, blockingFactor, calculationTime");
 			System.exit(-1);
@@ -34,6 +32,8 @@ public class Main {
 		calculationTime = Integer.parseInt(args[2]);
 
 		try {
+			doStuff();
+
 			server = new Socket(host, 8888);
 			input = new BufferedInputStream(server.getInputStream());
 			output = new BufferedOutputStream(server.getOutputStream());
