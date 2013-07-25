@@ -220,7 +220,7 @@ public class Utils {
 		int enemyCentralize = 0;
 
 		int friendQuad = -Utils.checkQuads(friends);
-		int enemyQuad = -Utils.checkQuads(enemies);
+		int enemyQuad = Utils.checkQuads(enemies);
 
 		for (int i = 0; i < 64; ++i) {
 			long offset = 0x1l << i;
@@ -308,7 +308,7 @@ public class Utils {
 			++line;
 		}
 
-		return (eulerValue / 100);
+		return eulerValue / 100;
 	}
 
 	public static final int[] pointss = {
