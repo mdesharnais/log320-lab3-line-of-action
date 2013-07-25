@@ -101,22 +101,16 @@ public class Utils {
 
 			if (futures.size() == 4) {
 				try {
-					boolean haveBreak = false;
 					while (!futures.isEmpty()) {
-						if (haveBreak) {
-							futures.remove().cancel(true);
-						} else {
-							value = Math.max(value, futures.remove().get());
+						value = Math.max(value, futures.remove().get());
 
-							if (value >= beta) {
-								haveBreak = true;
-							} else {
-								alpha = Math.max(value, alpha);
+						if (value >= beta) {
+							while (!futures.isEmpty()) {
+								futures.remove().cancel(true);
 							}
+							return value;
 						}
-					}
-					if (haveBreak) {
-						return value;
+						alpha = Math.max(value, alpha);
 					}
 				} catch (Exception e) {
 				}
@@ -124,19 +118,16 @@ public class Utils {
 		}
 
 		try {
-			boolean haveBreak = false;
 			while (!futures.isEmpty()) {
-				if (haveBreak) {
-					futures.remove().cancel(true);
-				} else {
-					value = Math.max(value, futures.remove().get());
+				value = Math.max(value, futures.remove().get());
 
-					if (value >= beta) {
-						haveBreak = true;
-					} else {
-						alpha = Math.max(value, alpha);
+				if (value >= beta) {
+					while (!futures.isEmpty()) {
+						futures.remove().cancel(true);
 					}
+					return value;
 				}
+				alpha = Math.max(value, alpha);
 			}
 		} catch (Exception e) {
 		}
