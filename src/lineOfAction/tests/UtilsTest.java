@@ -90,6 +90,24 @@ public class UtilsTest {
 	}
 
 	@Test
+	public void t() {
+		long[] boards = Board.makeBoard(new char[] {
+			'0', '0', '0', '0', '0', '0', '0', '2',
+			'0', '0', '0', '0', '0', '0', '0', '0',
+			'0', '0', '0', '0', '0', '0', '0', '0',
+			'0', '0', '0', '0', '0', '0', '0', '0',
+			'0', '0', '0', '0', '0', '0', '0', '0',
+			'0', '0', '0', '0', '0', '0', '0', '0',
+			'0', '2', '0', '0', '0', '0', '0', '0',
+			'0', '0', '0', '0', '0', '0', '0', '0'
+		});
+
+		//System.out.printf("%b", (boards[0] & (0x1 << 0 * 8 + 0)) != 0);
+
+		Utils.checkQuads(boards[0]);
+	}
+
+	@Test
 	public void testGenerateMovementsWhite() {
 		long[] boards = Board.makeBoard(new char[] {
 			'0', '2', '2', '2', '2', '2', '2', '0',

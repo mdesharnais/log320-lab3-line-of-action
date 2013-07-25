@@ -1,7 +1,5 @@
 package lineOfAction;
 
-import java.util.Arrays;
-
 public class Utils {
 
 	// My eyes are bleeding, this is global state!!!
@@ -218,54 +216,122 @@ public class Utils {
 	}
 
 	public static int evaluateBoard(long friends, long enemies) {
-		int friendlyValue = 0;
-		int ennemyValue = 0;
-		int centralisationValue = 0;
-		int quadValue = 0;
+		int value = 0;
 
 		for (int i = 0; i < 64; ++i) {
 			long offset = 0x1l << i;
-			int column = -1;
-			int line = -1;
 
-			if ((friends & offset) != 0) { // Permet de savoir s'il y a un pion ami à l'offset i
-				column = i & 0x7; // Ici on obtient la colonne correspondant à l'offset i
-				line = i >> 3; // Ici on obtient la ligne correspondante à l'offset i
-				friendlyValue += points[line][column];
+			if ((friends & offset) != 0) {
+				value += pointss[i];
 			}
 
-			if ((enemies & offset) != 0) { // Permet de savoir s'il y a un pion ennemi à l'offset i
-				column = i & 0x7; // Ici on obtient la colonne correspondant à l'offset i
-				line = i >> 3; // Ici on obtient la ligne correspondante à l'offset i
-				ennemyValue += points[line][column];
+			if ((enemies & offset) != 0) {
+				value -= pointss[i];
 			}
 		}
 
-		//centralisationValue = friendlyValue - ennemyValue;
-
-		return friendlyValue - ennemyValue;
+		return value;
 
 	}
 
-	public static int evaluateBoard(int[] board, int player) {
-		int friendlyValue = 0;
-		int ennemyValue = 0;
-		for (int i = 0; i < board.length; ++i) {
-			if (board[i] != 0) {
-				for (int j = 0; j < points.length; ++j) {
-					if (Arrays.binarySearch(points[j], i) >= 0) {
-						if (board[i] == player) {
-							friendlyValue += j;
-						} else {
-							ennemyValue += j;
+	public static int checkQuads(long board) {
+		int line = -1; //*8 + col
+		long offset;
+		boolean tLeft, tRight, bLeft, bRight;
+		int n = 0;
+		while (line < 8) {
+			for (int j = -1; j < 8; ++j) {
+				tLeft = false;
+				tRight = false;
+				bLeft = false;
+				bRight = false;
+
+				offset = line * 8 + j;
+
+				if (j >= 0) {
+					bLeft = (board & (0x1l << offset)) != 0;
+					tLeft = (board & (0x1l << offset + 8)) != 0;
+				}
+
+				if (j < 8) {
+					bRight = (board & (0x1l << offset + 1)) != 0;
+					tRight = (board & (0x1l << offset + 9)) != 0;
+				}
+
+				++n;
+				System.out.printf("line: %d\n", line);
+				System.out.printf("%b %b\n", tLeft, tRight);
+				System.out.printf("%b %b\n\n", bLeft, bRight);
+			}
+
+			++line;
+		}
+
+		System.out.printf("n=%d", n);
+
+		return 0;
+	}
+
+	public static final int[] pointss = {
+		0, 0, 0, 0, 0, 0, 0, 0,
+		0, 1, 1, 1, 1, 1, 1, 0,
+		0, 1, 2, 2, 2, 2, 1, 0,
+		0, 1, 2, 3, 3, 2, 1, 0,
+		0, 1, 2, 3, 3, 2, 1, 0,
+		0, 1, 2, 2, 2, 2, 1, 0,
+		0, 1, 1, 1, 1, 1, 1, 0,
+		0, 0, 0, 0, 0, 0, 0, 0
+	};
+
+	/*
+		public static int evaluateBoard(long friends, long enemies) {
+			int friendlyValue = 0;
+			int ennemyValue = 0;
+			int centralisationValue = 0;
+			int quadValue = 0;
+
+			for (int i = 0; i < 64; ++i) {
+				long offset = 0x1l << i;
+				int column = -1;
+				int line = -1;
+
+				if ((friends & offset) != 0) { // Permet de savoir s'il y a un pion ami à l'offset i
+					column = i & 0x7; // Ici on obtient la colonne correspondant à l'offset i
+					line = i >> 3; // Ici on obtient la ligne correspondante à l'offset i
+					friendlyValue += points[line][column];
+				}
+
+				if ((enemies & offset) != 0) { // Permet de savoir s'il y a un pion ennemi à l'offset i
+					column = i & 0x7; // Ici on obtient la colonne correspondant à l'offset i
+					line = i >> 3; // Ici on obtient la ligne correspondante à l'offset i
+					ennemyValue += points[line][column];
+				}
+			}
+
+			//centralisationValue = friendlyValue - ennemyValue;
+
+			return friendlyValue - ennemyValue;
+		}
+
+		public static int evaluateBoard(int[] board, int player) {
+			int friendlyValue = 0;
+			int ennemyValue = 0;
+			for (int i = 0; i < board.length; ++i) {
+				if (board[i] != 0) {
+					for (int j = 0; j < points.length; ++j) {
+						if (Arrays.binarySearch(points[j], i) >= 0) {
+							if (board[i] == player) {
+								friendlyValue += j;
+							} else {
+								ennemyValue += j;
+							}
+							break;
 						}
-						break;
 					}
 				}
 			}
+
+			return friendlyValue - ennemyValue;
 		}
-
-		return friendlyValue - ennemyValue;
-	}
-
+	*/
 }
