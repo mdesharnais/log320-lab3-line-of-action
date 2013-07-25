@@ -37,6 +37,94 @@ public class Utils {
 		}
 	}
 
+	public static long alphaBeta(long friends, long enemies, int depth) {
+		return alphaValue(friends, enemies, Long.MIN_VALUE, Long.MAX_VALUE, depth, 0);
+	}
+
+	public static long alphaValue(long friends, long enemies, long alpha, long beta, int depth, int movement) {
+		int[] movements = null;
+
+		if (depth == 0 || (movements = generateMovements(friends, enemies)) == null) {
+			long boardValue = Utils.evaluateBoard(friends, enemies);
+			return ((boardValue << 32) & 0xFFFFFFFF00000000l) | (movement & 0x00000000FFFFFFFFl);
+		}
+
+		boolean firstLevel = movement == 0;
+		long value = Long.MIN_VALUE;
+
+		int m = 0;
+		int index = 0;
+		while ((m = movements[index++]) != 0) {
+			int srcOffset = ((m & 0xFF000000) >> 24) + (((m & 0x00FF0000) >> 16) << 3);
+			int dstOffset = ((m & 0x0000FF00) >> 8) + ((m & 0x000000FF) << 3);
+
+			// Our friends is our child enemies
+			long childFriends = enemies;
+			long childEnemies = friends;
+
+			// Clear our source position in our board
+			childEnemies &= ~(0x1l << srcOffset);
+
+			// Clear our destination position in enemies board
+			childFriends &= ~(0x1l << dstOffset);
+
+			// Set our destination position in our board
+			childEnemies |= (0x1l << dstOffset);
+
+			value = Math.max(value,
+				betaValue(childFriends, childEnemies, alpha, beta, depth - 1, firstLevel ? m : movement));
+
+			if (value >= beta) {
+				return value;
+			}
+			alpha = Math.max(value, alpha);
+		}
+
+		return value;
+	}
+
+	private static long betaValue(long friends, long enemies, long alpha, long beta, int depth, int movement) {
+		int[] movements = null;
+
+		if (depth == 0 || (movements = generateMovements(friends, enemies)) == null) {
+			long boardValue = Utils.evaluateBoard(friends, enemies);
+			return ((boardValue << 32) & 0xFFFFFFFF00000000l) | (movement & 0x00000000FFFFFFFFl);
+		}
+
+		boolean firstLevel = movement == 0;
+		long value = Long.MAX_VALUE;
+
+		int m = 0;
+		int index = 0;
+		while ((m = movements[index++]) != 0) {
+			int srcOffset = ((m & 0xFF000000) >> 24) + (((m & 0x00FF0000) >> 16) << 3);
+			int dstOffset = ((m & 0x0000FF00) >> 8) + ((m & 0x000000FF) << 3);
+
+			// Our friends is our child enemies
+			long childFriends = enemies;
+			long childEnemies = friends;
+
+			// Clear our source position in our board
+			childEnemies &= ~(0x1l << srcOffset);
+
+			// Clear our destination position in enemies board
+			childFriends &= ~(0x1l << dstOffset);
+
+			// Set our destination position in our board
+			childEnemies |= (0x1l << dstOffset);
+
+			value = Math.min(value,
+				alphaValue(childFriends, childEnemies, alpha, beta, depth - 1, firstLevel ? m : movement));
+
+			if (value <= alpha) {
+				return value;
+			}
+			alpha = Math.min(value, beta);
+		}
+
+		return value;
+	}
+
 	public static int[] generateMovements(long friends, long enemies) {
 		int[] list = new int[96]; // 12 checkers * 8 directions == 72 possible movements
 		int index = 0;
@@ -212,7 +300,8 @@ public class Utils {
 				}
 			}
 		}
-		return list;
+
+		return index == 0 ? null : list;
 	}
 
 	public static int evaluateBoard(long friends, long enemies) {

@@ -4,6 +4,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -112,7 +113,9 @@ public class Main {
 			long begin = System.currentTimeMillis();
 			long remaining = 4900 - (begin - beginInMilliseconds);
 			//System.out.println(remaining);
-			Future<Long> future = executor.submit(new AlphaBeta(friends, enemies, depth++));
+
+			Future<Long> future = executor.submit(new FuckingJavaThatDoNotHaveProperSupportOfClosures(
+				friends, enemies, depth++));
 
 			try {
 				bestAlpha = future.get(remaining, TimeUnit.MILLISECONDS);
@@ -133,6 +136,23 @@ public class Main {
 
 		//System.exit(0);
 		return movement;
+	}
+
+	private static class FuckingJavaThatDoNotHaveProperSupportOfClosures implements Callable<Long> {
+		private long friends;
+		private long enemies;
+		private int depth;
+
+		public FuckingJavaThatDoNotHaveProperSupportOfClosures(long friends, long enemies, int depth) {
+			this.friends = friends;
+			this.enemies = enemies;
+			this.depth = depth;
+		}
+
+		@Override
+		public Long call() throws Exception {
+			return Utils.alphaBeta(this.friends, this.enemies, this.depth);
+		}
 	}
 
 	public static String repeat(char character, int times) {
