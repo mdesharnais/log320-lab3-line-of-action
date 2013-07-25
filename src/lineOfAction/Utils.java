@@ -305,26 +305,194 @@ public class Utils {
 	}
 
 	public static int evaluateBoard(long friends, long enemies) {
-		int friendCentralize = 0;
-		int enemyCentralize = 0;
+		int value = 0;
 
-		int friendQuad = -Utils.checkQuads(friends);
-		int enemyQuad = Utils.checkQuads(enemies);
+		value -= -Utils.checkQuads(friends);
+		value += Utils.checkQuads(enemies);
 
 		for (int i = 0; i < 64; ++i) {
 			long offset = 0x1l << i;
 
 			if ((friends & offset) != 0) {
-				friendCentralize += pointss[i];
+				value += pointss[i];
 			}
 
 			if ((enemies & offset) != 0) {
-				enemyCentralize -= pointss[i];
+				value -= pointss[i];
 			}
 		}
 
-		return friendCentralize + enemyCentralize + friendQuad + enemyQuad;
+		if (Main.blockingFactor > 0) {
+			value -= Main.blockingFactor * checkBlocking(friends, enemies);
+		}
 
+		return value;
+	}
+
+	public static int checkBlocking(long friends, long enemies) {
+		int checkersBlocked = 0;
+		int[] horizontalMoveLengthArray = new int[8];
+		int[] verticalMoveLengthArray = new int[8];
+		int[] diagonalUpperLeftToLowerRightArray = new int[15];
+		int[] diagonalLowerLeftToUpperRightArray = new int[15];
+
+		// Pre-calculate the movement length for every line/column
+		for (int i = 0; i < 64; ++i) {
+			long offset = 0x1l << i;
+			int n = 0;
+
+			if ((friends & offset) != 0) {
+				++n;
+			}
+
+			if ((enemies & offset) != 0) {
+				++n;
+			}
+
+			if (n != 0) {
+				int column = i & 0x7;
+				int line = i >> 3;
+				horizontalMoveLengthArray[line] += n;
+				verticalMoveLengthArray[column] += n;
+				diagonalUpperLeftToLowerRightArray[column + line] += n;
+				diagonalLowerLeftToUpperRightArray[7 + (column - line)] += n;
+			}
+		}
+
+		for (int i = 0; i < 64; ++i) {
+			long offset = 0x1l << i;
+			if ((friends & offset) != 0 && (0xFF818181818181FFl & offset) != 0) {
+				int column = i & 0x7;
+				int line = (i >> 3);
+
+				int horizontalMoveLength = horizontalMoveLengthArray[line];
+				int verticalMoveLength = verticalMoveLengthArray[column];
+				int diagonalUpperLeftToLowerRightMoveLength = diagonalUpperLeftToLowerRightArray[line
+					+ column];
+				int diagonalLowerLeftToUpperRightMoveLength = diagonalLowerLeftToUpperRightArray[7 + (column - line)];
+
+				boolean horizontalLeft = (column - horizontalMoveLength) >= 0;
+				boolean horizontalRight = (column + horizontalMoveLength) < 8;
+				boolean verticalUp = (line + verticalMoveLength) < 8;
+				boolean verticalDown = (line - verticalMoveLength) >= 0;
+				boolean diagonalUpperLeft = (column - diagonalUpperLeftToLowerRightMoveLength) >= 0
+					&& (line + diagonalUpperLeftToLowerRightMoveLength) < 8;
+				boolean diagonalUpperRight = (column + diagonalLowerLeftToUpperRightMoveLength) < 8
+					&& (line + diagonalLowerLeftToUpperRightMoveLength) < 8;
+				boolean diagonalLowerLeft = (column - diagonalLowerLeftToUpperRightMoveLength) >= 0
+					&& (line - diagonalLowerLeftToUpperRightMoveLength) >= 0;
+				boolean diagonalLowerRight = (column + diagonalUpperLeftToLowerRightMoveLength) < 8
+					&& (line - diagonalUpperLeftToLowerRightMoveLength) >= 0;
+
+				// Second, we make a pass to generate the moves
+				// We loop while there is one direction that could potentially be a movement
+				for (int j = 1; j < 8
+					&& (horizontalLeft || horizontalRight || verticalUp || verticalDown || diagonalUpperLeft
+						|| diagonalUpperRight || diagonalLowerLeft || diagonalLowerRight); ++j) {
+
+					int leftCol = column - j;
+					int rightCol = column + j;
+					int upLine = line + j;
+					int downLine = line - j;
+
+					if (horizontalLeft) {
+						if (j < horizontalMoveLength) {
+							horizontalLeft = (enemies & (0x1l << ((line << 3) + leftCol))) == 0;
+						} else if (j == horizontalMoveLength) {
+							horizontalLeft = (friends & (0x1l << ((line << 3) + leftCol))) == 0;
+						}
+					}
+
+					if (horizontalRight) {
+						if (j < horizontalMoveLength) {
+							horizontalRight = (enemies & (0x1l << ((line << 3) + rightCol))) == 0;
+						} else if (j == horizontalMoveLength) {
+							horizontalRight = (friends & (0x1l << ((line << 3) + rightCol))) == 0;
+						}
+					}
+
+					if (verticalUp) {
+						if (j < verticalMoveLength) {
+							verticalUp = (enemies & (0x1l << ((upLine << 3) + column))) == 0;
+						} else if (j == verticalMoveLength) {
+							verticalUp = (friends & (0x1l << ((upLine << 3) + column))) == 0;
+						}
+					}
+
+					if (verticalDown) {
+						if (j < verticalMoveLength) {
+							verticalDown = (enemies & (0x1l << ((downLine << 3) + column))) == 0;
+						} else if (j == verticalMoveLength) {
+							verticalDown = (friends & (0x1l << ((downLine << 3) + column))) == 0;
+						}
+					}
+
+					if (diagonalUpperLeft) {
+						if (j < diagonalUpperLeftToLowerRightMoveLength) {
+							diagonalUpperLeft = (enemies & (0x1l << ((upLine << 3) + leftCol))) == 0;
+						} else if (j == diagonalUpperLeftToLowerRightMoveLength) {
+							diagonalUpperLeft = (friends & (0x1l << ((upLine << 3) + leftCol))) == 0;
+						}
+					}
+
+					if (diagonalUpperRight) {
+						if (j < diagonalLowerLeftToUpperRightMoveLength) {
+							diagonalUpperRight = (enemies & (0x1l << ((upLine << 3) + rightCol))) == 0;
+						} else if (j == diagonalLowerLeftToUpperRightMoveLength) {
+							diagonalUpperRight = (friends & (0x1l << ((upLine << 3) + rightCol))) == 0;
+						}
+					}
+
+					if (diagonalLowerLeft) {
+						if (j < diagonalLowerLeftToUpperRightMoveLength) {
+							diagonalLowerLeft = (enemies & (0x1l << ((downLine << 3) + leftCol))) == 0;
+						} else if (j == diagonalLowerLeftToUpperRightMoveLength) {
+							diagonalLowerLeft = (friends & (0x1l << ((downLine << 3) + leftCol))) == 0;
+						}
+					}
+
+					if (diagonalLowerRight && j <= diagonalUpperLeftToLowerRightMoveLength) {
+						if (j < diagonalUpperLeftToLowerRightMoveLength) {
+							diagonalLowerRight = (enemies & (0x1l << ((downLine << 3) + rightCol))) == 0;
+						} else if (j == diagonalUpperLeftToLowerRightMoveLength) {
+							diagonalLowerRight = (friends & (0x1l << ((downLine << 3) + rightCol))) == 0;
+						}
+					}
+				}
+
+				int movementCount = 0;
+
+				if (horizontalLeft) {
+					++movementCount;
+				}
+				if (horizontalRight) {
+					++movementCount;
+				}
+				if (verticalUp) {
+					++movementCount;
+				}
+				if (verticalDown) {
+					++movementCount;
+				}
+				if (diagonalUpperLeft) {
+					++movementCount;
+				}
+				if (diagonalUpperRight) {
+					++movementCount;
+				}
+				if (diagonalLowerLeft) {
+					++movementCount;
+				}
+				if (diagonalLowerRight) {
+					++movementCount;
+				}
+
+				if (movementCount == 0 || movementCount == 1) {
+					++checkersBlocked;
+				}
+			}
+		}
+		return checkersBlocked;
 	}
 
 	public static int checkQuads(long board) {

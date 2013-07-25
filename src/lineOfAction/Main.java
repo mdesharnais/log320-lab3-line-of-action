@@ -4,7 +4,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.Scanner;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -12,6 +11,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 public class Main {
+
+	public static int blockingFactor;
+	public static int calculationTime;
 
 	private static String host;
 	private static Socket server;
@@ -22,17 +24,14 @@ public class Main {
 	public static void main(String[] args) throws Exception {
 		doStuff();
 
-		Scanner sc = new Scanner(System.in);
-
-		System.out.print("Input server to connect to: ");
-		host = sc.nextLine();
-		sc.close();
-
-		if (host.isEmpty()) {
-			host = "localhost";
+		if (args.length != 3) {
+			System.err.println("Args mismatch: host, blockingFactor, calculationTime");
+			System.exit(-1);
 		}
 
-		input = new BufferedInputStream(System.in);
+		host = args[0];
+		blockingFactor = Integer.parseInt(args[1]);
+		calculationTime = Integer.parseInt(args[2]);
 
 		try {
 			server = new Socket(host, 8888);
@@ -140,7 +139,7 @@ public class Main {
 		//*
 		do {
 			long begin = System.currentTimeMillis();
-			long remaining = 4900 - (begin - beginInMilliseconds);
+			long remaining = calculationTime - (begin - beginInMilliseconds);
 			//System.out.println(remaining);
 
 			Future<Long> future = executor.submit(new FuckingJavaThatDoNotHaveProperSupportOfClosures(
@@ -153,7 +152,7 @@ public class Main {
 			} catch (Exception e) {
 				future.cancel(true);
 			}
-		} while (System.currentTimeMillis() - beginInMilliseconds < 4900);
+		} while (System.currentTimeMillis() - beginInMilliseconds < calculationTime);
 		//*/
 		int movement = (int) (bestAlpha & 0x00000000FFFFFFFFl);
 		String move = Movement.toString(movement);
