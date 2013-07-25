@@ -1,5 +1,10 @@
 package lineOfAction;
 
+import java.util.ArrayDeque;
+import java.util.Queue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
+
 public class Utils {
 
 	// My eyes are bleeding, this is global state!!!
@@ -37,8 +42,34 @@ public class Utils {
 		}
 	}
 
+	private static class FuckingJavaThatDoNotHaveProperSupportOfClosures implements Callable<Long> {
+		private long friends;
+		private long enemies;
+		private long alpha;
+		private long beta;
+		private int depth;
+		private int movement;
+
+		public FuckingJavaThatDoNotHaveProperSupportOfClosures(long friends, long enemies, long alpha,
+			long beta, int depth, int movement) {
+			this.friends = friends;
+			this.enemies = enemies;
+			this.alpha = alpha;
+			this.beta = beta;
+			this.depth = depth;
+			this.movement = movement;
+		}
+
+		@Override
+		public Long call() {
+			return Utils.betaValue(this.friends, this.enemies, this.alpha, this.beta, this.depth,
+				this.movement);
+		}
+	}
+
 	public static long alphaBeta(long friends, long enemies, int depth) {
-		//return alphaValue(friends, enemies, Long.MIN_VALUE, Long.MAX_VALUE, depth, 0);
+		Queue<Future<Long>> futures = new ArrayDeque<Future<Long>>(4);
+
 		long alpha = Long.MIN_VALUE;
 		long beta = Long.MAX_VALUE;
 
@@ -64,13 +95,50 @@ public class Utils {
 			// Set our destination position in our board
 			childEnemies |= (0x1l << dstOffset);
 
-			value = Math.max(value,
-				betaValue(childFriends, childEnemies, alpha, beta, depth - 1, m));
+			futures.add(Main.s_executor.submit(new FuckingJavaThatDoNotHaveProperSupportOfClosures(
+				childFriends, childEnemies, alpha,
+				beta, depth - 1, m)));
 
-			if (value >= beta) {
-				return value;
+			if (futures.size() == 4) {
+				try {
+					boolean haveBreak = false;
+					while (!futures.isEmpty()) {
+						if (haveBreak) {
+							futures.remove().cancel(true);
+						} else {
+							value = Math.max(alpha, futures.remove().get());
+
+							if (value >= beta) {
+								haveBreak = true;
+							}
+
+							alpha = Math.max(value, alpha);
+						}
+					}
+					if (haveBreak) {
+						break;
+					}
+				} catch (Exception e) {
+				}
 			}
-			alpha = Math.max(value, alpha);
+		}
+
+		try {
+			boolean haveBreak = false;
+			while (!futures.isEmpty()) {
+				if (haveBreak) {
+					futures.remove().cancel(true);
+				} else {
+					value = Math.max(alpha, futures.remove().get());
+
+					if (value >= beta) {
+						haveBreak = true;
+					}
+
+					alpha = Math.max(value, alpha);
+				}
+			}
+		} catch (Exception e) {
 		}
 
 		return value;
@@ -117,7 +185,7 @@ public class Utils {
 		return value;
 	}
 
-	private static long betaValue(long friends, long enemies, long alpha, long beta, int depth, int movement) {
+	public static long betaValue(long friends, long enemies, long alpha, long beta, int depth, int movement) {
 		int[] movements = null;
 
 		if (depth == 0 || (movements = generateMovements2(friends, enemies)) == null) {
